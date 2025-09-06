@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - {{ user.username }}{% endblock %}
+
+{% block content %}
+    <h2>Welcome, {{ user.username }}!</h2>
+    <div class="card">
+        <h3>AI-Generated Encouragement</h3>
+        <p><em>{{ encouragement }}</em></p>
+    </div>
+
+    <div class="grid-container">
+        <div class="card">
+            <h3>Reading Analytics</h3>
+            <p><strong>Total Reading Hours (This Month):</strong> {{ reading_hours }}</p>
+            <p><strong>Books Completed:</strong> {{ books_read }}</p>
+            <p><strong>Favorite Genres:</strong> {{ genres|join(', ') }}</p>
+        </div>
+        <div class="card">
+            <h3>Academic Snapshot</h3>
+            <p><strong>Major:</strong> {{ user.major or 'Not set' }}</p>
+            <p><strong>Year:</strong> {{ user.year or 'Not set' }}</p>
+            <p><strong>Current Courses:</strong> {{ user.courses or 'Not set' }}</p>
+            <p><strong>AI Performance Suggestion:</strong> {{ performance }}</p>
+        </div>
+    </div>
+{% endblock %}
