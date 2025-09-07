@@ -1,0 +1,90 @@
+/* Dashboard Grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Card styling */
+.card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Welcome Banner */
+.welcome-banner {
+    background: linear-gradient(to right, #0056b3, #007bff);
+    color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.carousel-container {
+    position: relative;
+}
+
+.carousel-slide {
+    display: none;
+}
+
+.carousel-slide.active {
+    display: block;
+}
+
+/* Books Stats */
+.books-stats .books-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.books-number .big-number {
+    font-size: 3rem;
+    font-weight: bold;
+}
+
+/* Performance Metrics */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.metric-item {
+    text-align: center;
+}
+
+/* Reading Hours */
+.reading-hours .chart-container {
+    height: 200px; /* Example height */
+}
+
+/* Last eBook */
+.last-ebook .ebook-content {
+    display: flex;
+    gap: 1rem;
+    cursor: pointer;
+}
+
+.last-ebook .book-cover img {
+    width: 80px;
+    height: auto;
+}
+
+/* Calendar */
+.calendar-events .calendar-container {
+    margin-bottom: 1rem;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    text-align: center;
+}
