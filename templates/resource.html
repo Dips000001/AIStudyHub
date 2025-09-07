@@ -60,12 +60,15 @@
 {% block scripts %}
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Set up favorite button click handlers
             document.querySelectorAll('.favorite-btn').forEach(button => {
                 button.addEventListener('click', function() {
                     const bookId = this.dataset.bookId;
                     addToFavorites(bookId);
                 });
             });
+            
+            // Note: Global image error handling is now in layout.html
         });
 
         function addToFavorites(bookId) {
@@ -81,12 +84,60 @@
             .then(data => {
                 console.log('Success:', data);
                 if (data.status === 'success') {
-                    button.classList.toggle('favorited');
+                    // Toggle the favorite button appearance for all buttons with this book ID
+                    document.querySelectorAll(`.favorite-btn[data-book-id='${bookId}']`).forEach(btn => {
+                        btn.classList.toggle('favorited');
+                    });
+                    
+                    // If the book was added to bookshelf and we have book data
+                    if (data.added_to_bookshelf && data.book) {
+                        const book = data.book;
+                        
+                        // Check if the book is already in my bookshelf
+                        const existingBook = document.querySelector(`.bookcase:first-of-type .book button[data-book-id='${bookId}']`);
+                        if (!existingBook) {
+                            // Create new book element
+                            const bookElement = document.createElement('div');
+                            bookElement.className = 'book';
+                            bookElement.setAttribute('data-book-id', book.id);
+                            bookElement.innerHTML = `
+                                <a href="${book.link}"><img src="/static/${book.img}" alt="${book.title}"></a>
+                                <button class="favorite-btn favorited" data-book-id="${book.id}">❤️</button>
+                            `;
+                            
+                            // Add event listener to the new favorite button
+                            const newButton = bookElement.querySelector('.favorite-btn');
+                            newButton.addEventListener('click', function() {
+                                addToFavorites(this.dataset.bookId);
+                            });
+                            
+                            // Add error handler to the new image
+                            const newImage = bookElement.querySelector('img');
+                            newImage.addEventListener('error', function() {
+                                handleImageError(this);
+                            });
+                            
+                            // Add to my bookshelf
+                            const myBookshelf = document.querySelector('.bookcase:first-of-type .shelf');
+                            myBookshelf.appendChild(bookElement);
+                        }
+                    }
+                    
+                    // If the book was removed from bookshelf
+                    if (data.removed_from_bookshelf) {
+                        // Find and remove the book from the bookshelf in the UI
+                        const bookElement = document.querySelector(`.bookcase:first-of-type .book button[data-book-id='${bookId}']`).closest('.book');
+                        if (bookElement) {
+                            bookElement.remove();
+                        }
+                    }
                 }
             })
             .catch((error) => {
                 console.error('Error:', error);
             });
         }
+        
+        // handleImageError function is now defined globally in layout.html
     </script>
 {% endblock %}

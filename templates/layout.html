@@ -9,6 +9,51 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     {% block styles %}{% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Global image error handler to be available early in page load
+        function handleImageError(imgElement) {
+            // Get the book title from alt attribute
+            const bookTitle = imgElement.getAttribute('alt');
+            
+            // Create a placeholder div to replace the image
+            const placeholder = document.createElement('div');
+            placeholder.className = 'book-placeholder';
+            placeholder.textContent = bookTitle;
+            
+            // Set inline styles for the placeholder
+            placeholder.style.width = '100%';
+            placeholder.style.height = '150px';
+            placeholder.style.backgroundColor = '#ffffff';
+            placeholder.style.border = '1px solid #ddd';
+            placeholder.style.display = 'flex';
+            placeholder.style.alignItems = 'center';
+            placeholder.style.justifyContent = 'center';
+            placeholder.style.textAlign = 'center';
+            placeholder.style.padding = '10px';
+            placeholder.style.boxSizing = 'border-box';
+            placeholder.style.fontSize = '12px';
+            placeholder.style.fontWeight = 'bold';
+            placeholder.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+            
+            // Replace the image with the placeholder
+            imgElement.parentNode.replaceChild(placeholder, imgElement);
+        }
+        
+        // Set up global image error handling
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('img').forEach(img => {
+                // Add error handler to all images
+                img.addEventListener('error', function() {
+                    handleImageError(this);
+                });
+                
+                // Check for already failed images
+                if (img.complete && img.naturalWidth === 0) {
+                    handleImageError(img);
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <header class="header">
