@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Recommendations{% endblock %}
+{% block content %}
+<h1>AI-Powered Recommendation Engine</h1>
+
+<!-- Embedded Chatbot (LLM) -->
+<div class="chatbot-section">
+    <h2>Embedded Chatbot (LLM)</h2>
+    <p>An interactive chatbot to assist with finding resources, answering queries, and providing book recommendations.</p>
+    <div class="chatbot-container">
+        <div class="chat-window">
+            <!-- Chat messages will appear here -->
+        </div>
+        <input type="text" class="chat-input" placeholder="Ask me anything...">
+    </div>
+</div>
+
+<!-- Personalized Suggestions -->
+<div class="suggestions-section">
+    <h2>Personalized Suggestions</h2>
+    <p>Recommendations based on your major, year of study, registered courses, and borrowing history.</p>
+    <div class="suggestions-list">
+        <!-- Suggestion Item -->
+        <div class="suggestion-item">
+            <h3>Book Title 1</h3>
+            <p>Reason: Relevant to your 'Advanced Algorithms' course.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Social Recommendations -->
+<div class="social-recs-section">
+    <h2>Social Recommendations</h2>
+    <p>Suggests books based on what other students in the same major or course are reading.</p>
+    <div class="social-recs-list">
+        <!-- Social Recommendation Item -->
+        <div class="social-rec-item">
+            <h3>Book Title 2</h3>
+            <p>Trending in 'Computer Science'.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

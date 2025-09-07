@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% block title %}Booking{% endblock %}
+{% block content %}
+<h1>Comprehensive Booking System</h1>
+<p>A unified system for borrowing physical books, e-books, academic resources, and workshops.</p>
+
+<!-- Search and Filter Section -->
+<div class="search-filter-section">
+    <input type="text" placeholder="Search for resources..." class="search-input">
+    <select class="filter-select">
+        <option value="all">All Categories</option>
+        <option value="books">Physical Books</option>
+        <option value="ebooks">E-books</option>
+        <option value="papers">Past Papers</option>
+        <option value="workshops">Workshops</option>
+    </select>
+    <button class="search-button">Search</button>
+</div>
+
+<!-- Tabbed Layout for Booking Categories -->
+<div class="tab-layout">
+    <div class="tab-header">
+        <button class="tab-link active" onclick="openCategory('books')">Physical Books</button>
+        <button class="tab-link" onclick="openCategory('ebooks')">E-books</button>
+        <button class="tab-link" onclick="openCategory('resources')">Academic Resources</button>
+        <button class="tab-link" onclick="openCategory('workshops')">Workshops</button>
+    </div>
+
+    <!-- Physical Books Category -->
+    <div id="books" class="tab-content active">
+        <h2>Physical Books</h2>
+        <p>Option for a "trial read" to encourage physical borrowing.</p>
+        <div class="resource-list">
+            <!-- Book Item -->
+            <div class="resource-item">
+                <h3>Book Title 1</h3>
+                <p>Author Name</p>
+                <button class="borrow-button">Borrow</button>
+                <button class="trial-button">Trial Read</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- E-books Category -->
+    <div id="ebooks" class="tab-content">
+        <h2>E-books</h2>
+        <p>Direct integration for seamless online reading.</p>
+        <div class="resource-list">
+            <!-- E-book Item -->
+            <div class="resource-item">
+                <h3>E-book Title 1</h3>
+                <p>Author Name</p>
+                <button class="read-online-button">Read Online</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Academic Resources Category -->
+    <div id="resources" class="tab-content">
+        <h2>Past Papers and Academic Resources</h2>
+        <p>Easy access to essential study materials.</p>
+        <div class="resource-list">
+            <!-- Resource Item -->
+            <div class="resource-item">
+                <h3>Past Paper - Course 101</h3>
+                <p>Year: 2023</p>
+                <button class="download-button">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Workshops Category -->
+    <div id="workshops" class="tab-content">
+        <h2>Workshops</h2>
+        <p>Book a 3D printer, laser cutter, etc.</p>
+        <div class="resource-list">
+            <!-- Workshop Item -->
+            <div class="resource-item">
+                <h3>3D Printer Booking</h3>
+                <p>Availability: 3 slots remaining</p>
+                <button class="book-slot-button">Book a Slot</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function openCategory(categoryName) {
+    var i;
+    var x = document.getElementsByClassName("tab-content");
+    for (i = 0; i < x.length; i++) {
+        x[i].style.display = "none";
+    }
+    document.getElementById(categoryName).style.display = "block";
+
+    var tablinks = document.getElementsByClassName("tab-link");
+    for (i = 0; i < x.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    }
+    event.currentTarget.className += " active";
+}
+</script>
+{% endblock %}
