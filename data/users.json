@@ -1,0 +1,21 @@
+{
+  "alex": {
+    "password": "password",
+    "favorites": [
+      1,
+      2
+    ],
+    "my_bookshelf": [
+      1,
+      2
+    ],
+    "name": "Alex Smith",
+    "username": "alex",
+    "role": "Student",
+    "year": "Year2",
+    "major": "Bachelor of Computer Science",
+    "followers": 2,
+    "following": 4,
+    "avatar": "profile_avatar.png"
+  }
+}
