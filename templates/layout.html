@@ -44,7 +44,7 @@
 
         window.onclick = function(event) {
             if (!event.target.matches('.account-btn')) {
-                var dropdowns = document.getElementsByClassName("dropdown-menu");
+                var dropdowns = document.getElementById("dropdownMenu");
                 for (var i = 0; i < dropdowns.length; i++) {
                     var openDropdown = dropdowns[i];
                     if (openDropdown.classList.contains('show')) {
