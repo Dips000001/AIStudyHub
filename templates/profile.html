@@ -1,49 +1,77 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
 
-{% block title %}Your Profile{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+{% endblock %}
 
 {% block content %}
-    <h2>Profile & Settings</h2>
-
-    {% if message %}
-        <div class="message">{{ message }}</div>
-    {% endif %}
-
-    <div class="grid-container">
-        <div class="card">
-            <h3>Update Your Information</h3>
-            <form method="post">
-                <div class="form-group">
-                    <label for="major">Major</label>
-                    <input type="text" id="major" name="major" class="form-control" value="{{ user.major or '' }}">
-                </div>
-                <div class="form-group">
-                    <label for="year">Year</label>
-                    <input type="number" id="year" name="year" class="form-control" value="{{ user.year or '' }}">
-                </div>
-                <div class="form-group">
-                    <label for="courses">Courses (comma-separated)</label>
-                    <input type="text" id="courses" name="courses" class="form-control" value="{{ user.courses or '' }}">
-                </div>
-                <div class="form-group">
-                    <label for="reading_goals">Reading Goals</label>
-                    <input type="text" id="reading_goals" name="reading_goals" class="form-control" value="{{ user.reading_goals or '' }}">
-                </div>
-                <button type="submit" class="btn">Update Profile</button>
-            </form>
+<div class="profile-container">
+    <aside class="profile-sidebar">
+        <div class="profile-avatar">
+            <!-- Placeholder for avatar image -->
+            <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar">
         </div>
-
-        <div class="card">
-            <h3>Your Borrowing History</h3>
-            {% if history %}
-            <ul>
-                {% for item in history %}
-                    <li>{{ item.title }} ({{ item.type.replace('_', ' ')|title }})</li>
-                {% endfor %}
-            </ul>
-            {% else %}
-            <p>You have not borrowed any resources yet.</p>
-            {% endif %}
+        <h2>{{ user.name }}</h2>
+        <p class="username">@{{ user.username }}</p>
+        <p>{{ user.role }}</p>
+        <p>{{ user.year }}</p>
+        <p>{{ user.major }}</p>
+        <button class="edit-profile-btn">Edit profile</button>
+        <div class="profile-stats">
+            <span><i class="fas fa-users"></i> {{ user.followers }} followers</span>
+            <span>·</span>
+            <span>{{ user.following }} following</span>
         </div>
-    </div>
+        <div class="rewards">
+            <h3>Rewards</h3>
+            <span><i class="fas fa-star"></i> PRO</span>
+        </div>
+        <div class="organizations">
+            <h3>Organizations</h3>
+            <span class="org-logo">UR</span>
+        </div>
+    </aside>
+    <main class="profile-main">
+        <section class="loan-list card">
+            <h3>Loan List</h3>
+            <div class="loan-item">
+                <div>
+                    <p><strong>Language teaching competenc...</strong></p>
+                    <p class="author">Rossner, Richard</p>
+                </div>
+                <div class="loan-details">
+                    <p class="due-date">Due: 01/09/2023, 23:59</p>
+                    <p class="return-loc">Return to: Stanley Ho Library General ...</p>
+                </div>
+                <button class="renew-btn"><i class="fas fa-sync-alt"></i> RENEW</button>
+            </div>
+        </section>
+
+        <section class="booking-activity card">
+            <h3>1 booking in the last year</h3>
+            <div class="contribution-graph">
+                <!-- Contribution graph placeholder -->
+                <p style="text-align: center; padding: 20px; color: #666;">Contribution graph would be generated here.</p>
+            </div>
+        </section>
+
+        <section class="upcoming-activity card">
+            <h3>Upcoming activity</h3>
+            <p>September 2025</p>
+            <div class="activity-item">
+                <div class="activity-date">
+                    <span class="day">10</span>
+                    <span class="month">Sep</span>
+                </div>
+                <div class="activity-details">
+                    <p><strong>Introduction of 3D printer</strong></p>
+                    <p>Venue: Yeung B7510</p>
+                    <p>Instructor: Prof. Howard Leung</p>
+                </div>
+            </div>
+            <button class="show-more-btn">Show more activity</button>
+        </section>
+    </main>
+</div>
 {% endblock %}
