@@ -44,6 +44,54 @@ def index():
         return redirect(url_for('dashboard'))
     return render_template('index.html')
 
+@app.route('/register', methods=['GET', 'POST'])
+def register_page():
+    if request.method == 'GET':
+        return render_template('register.html')
+    
+    # Process registration form submission
+    username = request.form['username']
+    password = request.form['password']
+    confirm_password = request.form['confirm_password']
+    name = request.form['name']
+    email = request.form.get('email', '')
+    role = request.form.get('role', 'Student')
+    year = request.form.get('year', '')
+    major = request.form.get('major', '')
+    
+    # Validate the form data
+    users = get_users()
+    if username in users:
+        return render_template('register.html', error='Username already exists')
+    
+    if password != confirm_password:
+        return render_template('register.html', error='Passwords do not match')
+    
+    # Create new user
+    users[username] = {
+        'password': password,
+        'name': name,
+        'username': username,
+        'email': email,
+        'role': role,
+        'year': year,
+        'major': major,
+        'favorites': [],
+        'my_bookshelf': [],
+        'followers': 0,
+        'following': 0,
+        'avatar': 'profile_avatar.png'  # Default avatar
+    }
+    
+    # Save updated users data
+    save_users(users)
+    
+    # Automatically log in the new user
+    session['username'] = username
+    session['favorites'] = []
+    
+    return redirect(url_for('dashboard'))
+
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
@@ -55,7 +103,7 @@ def login():
         # Initialize favorites from the user's data
         session['favorites'] = users[username].get('favorites', [])
         return redirect(url_for('dashboard'))
-    return 'Invalid credentials'
+    return render_template('index.html', error='Invalid username or password')
 
 @app.route('/logout')
 def logout():
