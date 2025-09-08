@@ -137,6 +137,12 @@ def recommendations():
         return redirect(url_for('index'))
     return render_template('recommendations.html')
 
+@app.route('/library')
+def library():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('library.html')
+
 @app.route('/resource')
 def resource():
     if 'username' not in session:

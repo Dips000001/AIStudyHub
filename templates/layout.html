@@ -14,12 +14,12 @@
         function handleImageError(imgElement) {
             // Get the book title from alt attribute
             const bookTitle = imgElement.getAttribute('alt');
-            
+
             // Create a placeholder div to replace the image
             const placeholder = document.createElement('div');
             placeholder.className = 'book-placeholder';
             placeholder.textContent = bookTitle;
-            
+
             // Set inline styles for the placeholder
             placeholder.style.width = '100%';
             placeholder.style.height = '150px';
@@ -34,19 +34,19 @@
             placeholder.style.fontSize = '12px';
             placeholder.style.fontWeight = 'bold';
             placeholder.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-            
+
             // Replace the image with the placeholder
             imgElement.parentNode.replaceChild(placeholder, imgElement);
         }
-        
+
         // Set up global image error handling
         document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('img').forEach(img => {
                 // Add error handler to all images
-                img.addEventListener('error', function() {
+                img.addEventListener('error', function () {
                     handleImageError(this);
                 });
-                
+
                 // Check for already failed images
                 if (img.complete && img.naturalWidth === 0) {
                     handleImageError(img);
@@ -62,8 +62,10 @@
             <nav class="nav-menu">
                 <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
                 <a href="{{ url_for('booking') }}" class="nav-link {% if request.endpoint == 'booking' %}active{% endif %}">Booking</a>
-                <a href="{{ url_for('recommendations') }}" class="nav-link {% if request.endpoint == 'recommendations' %}active{% endif %}">Recommendations</a>
                 <a href="{{ url_for('resource') }}" class="nav-link {% if request.endpoint == 'resource' %}active{% endif %}">Resources</a>
+                <a href="{{ url_for('library') }}" class="nav-link {% if request.endpoint == 'library' %}active{% endif %}">Library</a>
+                <a href="{{ url_for('recommendations') }}" class="nav-link {% if request.endpoint == 'recommendations' %}active{% endif %}">Recommendations</a>
+
             </nav>
             <div class="account-dropdown">
                 <button class="account-btn" onclick="toggleDropdown()">
@@ -87,7 +89,7 @@
             document.getElementById("dropdownMenu").classList.toggle("show");
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (!event.target.matches('.account-btn')) {
                 var dropdowns = document.getElementById("dropdownMenu");
                 for (var i = 0; i < dropdowns.length; i++) {
