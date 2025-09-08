@@ -58,12 +58,11 @@
 <body>
     <header class="header">
         <div class="header-content">
-            <h1 class="logo">StudyHub</h1>
+            <h1 class="logo">AI StudyHub</h1>
             <nav class="nav-menu">
                 <a href="{{ url_for('dashboard') }}" class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}">Dashboard</a>
-                <a href="{{ url_for('booking') }}" class="nav-link {% if request.endpoint == 'booking' %}active{% endif %}">Booking</a>
-                <a href="{{ url_for('resource') }}" class="nav-link {% if request.endpoint == 'resource' %}active{% endif %}">Resources</a>
                 <a href="{{ url_for('library') }}" class="nav-link {% if request.endpoint == 'library' %}active{% endif %}">Library</a>
+                <a href="{{ url_for('booking') }}" class="nav-link {% if request.endpoint == 'booking' %}active{% endif %}">Booking</a>
                 <a href="{{ url_for('recommendations') }}" class="nav-link {% if request.endpoint == 'recommendations' %}active{% endif %}">Recommendations</a>
 
             </nav>

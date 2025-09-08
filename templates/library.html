@@ -356,6 +356,6 @@
     </section>
 
 {% endblock %}
-
-<!-- <script src="dashboard.js"></script>
-<script src="library.js"></script> -->
+{% block scripts %}
+<script src="{{ url_for('static', filename='library.js') }}"></script>
+{% endblock %}
