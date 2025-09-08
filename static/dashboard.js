@@ -1,91 +1,6 @@
-// Carousel for Welcome Banner
-let slideIndex = 1;
-let currentSlideIndex = 0;
+// Dashboard functionality
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
-let slideInterval;
-
-// Encouragement messages
-const encouragementMessages = [
-    "Every page you read is a step closer to your dreams. Keep pushing forward!",
-    "Your dedication to learning is inspiring. Today is another opportunity to grow!",
-    "Success is the sum of small efforts repeated day in and day out. You're doing amazing!",
-    "Knowledge is power, and you're building an incredible foundation. Stay curious!",
-    "Reading opens doors to infinite possibilities. You're on the right path!",
-    "Each book you complete makes you stronger and wiser. Keep going!",
-    "Your commitment to learning will pay off in ways you can't imagine yet.",
-    "Great minds read great books. You're developing yours every day!"
-];
-
-// Carousel functionality
-function initializeCarousel() {
-    startCarousel();
-}
-
-function startCarousel() {
-    slideInterval = setInterval(() => {
-        nextSlide();
-    }, 5000); // Change slide every 5 seconds
-}
-
-function stopCarousel() {
-    clearInterval(slideInterval);
-}
-
-function currentSlide(n) {
-    stopCarousel();
-    showSlide(n - 1);
-    startCarousel();
-}
-
-function nextSlide() {
-    currentSlideIndex = (currentSlideIndex + 1) % 3;
-    showSlide(currentSlideIndex);
-}
-
-function showSlide(n) {
-    const slides = document.querySelectorAll('.carousel-slide');
-    const indicators = document.querySelectorAll('.indicator');
-    
-    slides.forEach(slide => slide.classList.remove('active'));
-    indicators.forEach(indicator => indicator.classList.remove('active'));
-    
-    slides[n].classList.add('active');
-    indicators[n].classList.add('active');
-    
-    currentSlideIndex = n;
-}
-
-// showSlides(slideIndex);
-
-// function currentSlide(n) {
-//     showSlides(slideIndex = n);
-// }
-
-// function showSlides(n) {
-//     let i;
-//     let slides = document.getElementsByClassName("carousel-slide");
-//     let indicators = document.getElementsByClassName("indicator");
-//     if (n > slides.length) {slideIndex = 1}
-//     if (n < 1) {slideIndex = slides.length}
-//     for (i = 0; i < slides.length; i++) {
-//         slides[i].style.display = "none";
-//     }
-//     for (i = 0; i < indicators.length; i++) {
-//         indicators[i].className = indicators[i].className.replace(" active", "");
-//     }
-//     slides[slideIndex-1].style.display = "block";
-//     indicators[slideIndex-1].className += " active";
-// }
-
-// Generate random encouragement message
-function generateEncouragementMessage() {
-    const randomIndex = Math.floor(Math.random() * encouragementMessages.length);
-    const encouragementElement = document.getElementById('encouragementText');
-    if (encouragementElement) {
-        encouragementElement.textContent = encouragementMessages[randomIndex];
-    }
-}
 
 // Calendar functionality
 function initializeCalendar() {
@@ -180,68 +95,81 @@ function continueReading() {
 
 // Chart.js initializations
 document.addEventListener('DOMContentLoaded', function() {
-    initializeCarousel();
-    // initializeCharts();
     initializeCalendar();
-    generateEncouragementMessage();
-
-    // Genre Chart
-    var genreCtx = document.getElementById('genreChart').getContext('2d');
-    var genreChart = new Chart(genreCtx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Fiction', 'Non-Fiction', 'Academic'],
-            datasets: [{
-                data: [5, 4, 3],
-                backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            legend: { display: false }
-        }
-    });
-
-    // Performance Chart
-    var performanceCtx = document.getElementById('performanceChart').getContext('2d');
-    var performanceChart = new Chart(performanceCtx, {
-        type: 'line',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [{
-                label: 'CGPA Trend',
-                data: [3.05, 3.10, 3.15, 3.20],
-                borderColor: '#007bff',
-                fill: false
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
-
-    // Reading Hours Chart
-    var readingHoursCtx = document.getElementById('readingHoursChart').getContext('2d');
-    var readingHoursChart = new Chart(readingHoursCtx, {
-        type: 'bar',
-        data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-            datasets: [{
-                label: 'Hours Read',
-                data: [10, 12, 8, 15],
-                backgroundColor: [
-                    'rgba(66, 133, 244, 0.8)',
-                    'rgba(52, 168, 83, 0.8)',
-                    'rgba(251, 188, 4, 0.8)',
-                    'rgba(234, 67, 53, 0.8)'
-                ]
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
-        }
-    });
+    initializeCharts();
 });
+
+function initializeCharts() {
+    // Genre Chart (Doughnut)
+    const genreCtx = document.getElementById('genreChart');
+    if (genreCtx) {
+        new Chart(genreCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Fiction', 'Non-Fiction', 'Academic'],
+                datasets: [{
+                    data: [5, 4, 3],
+                    backgroundColor: ['#4285f4', '#34a853', '#fbbc04'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                cutout: '60%'
+            }
+        });
+    }
+
+    // CGPA Trend Chart (Line)
+    const cgpaCtx = document.getElementById('cgpaChart');
+    if (cgpaCtx) {
+        new Chart(cgpaCtx, {
+            type: 'line',
+            data: {
+                labels: ['Year1 Sem1', 'Year1 Sem2', 'Year1 Summer Sem', 'Year2 Sem1'],
+                datasets: [{
+                    label: 'CGPA',
+                    data: [3.04, 3.08, 3.16, 3.20],
+                    borderColor: '#4285f4',
+                    backgroundColor: 'rgba(66, 133, 244, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#4285f4',
+                    pointBorderColor: '#ffffff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        min: 3.0,
+                        max: 3.25,
+                        ticks: {
+                            stepSize: 0.02
+                        },
+                        grid: {
+                            color: 'rgba(0,0,0,0.1)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
+}
