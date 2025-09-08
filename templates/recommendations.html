@@ -64,26 +64,87 @@
     }
 
     .top-10-grid {
-        display: flex;
-        gap: 15px;
-        overflow-x: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
         padding: 20px 0;
-        scroll-behavior: smooth;
+        max-width: 100%;
     }
 
     .top-10-item {
         position: relative;
-        min-width: 200px;
+        width: 100%;
         height: 280px;
         border-radius: 10px;
         overflow: hidden;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         cursor: pointer;
+        background: #f8f9fa;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
     .top-10-item:hover {
         transform: scale(1.05);
         box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #666;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .favorite-btn:hover {
+        background-color: #dc3545;
+        color: white;
+        transform: scale(1.1);
+    }
+
+    .favorite-btn.active {
+        background-color: #dc3545;
+        color: white;
+    }
+
+    .favorite-btn.loading {
+        opacity: 0.6;
+        pointer-events: none;
+        animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    .favorite-btn.loading::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #666;
+        border-top: 2px solid transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 
     .rank-number {
@@ -109,23 +170,37 @@
         height: 220px;
         object-fit: cover;
         border-radius: 10px 10px 0 0;
+        display: block;
     }
 
     .book-info {
-        padding: 15px;
-        background: rgba(44, 62, 80, 0.9);
-        height: 60px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 10px;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        min-height: 60px;
         display: flex;
-        align-items: center;
+        align-items: flex-end;
         justify-content: center;
+        border-radius: 0 0 10px 10px;
     }
 
     .book-title {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
         text-align: center;
         color: white;
         margin: 0;
+        line-height: 1.3;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        max-height: 40px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
     .personalized-section .section-header {
@@ -155,6 +230,27 @@
         transition: transform 0.3s ease, background 0.3s ease;
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         overflow: hidden;
+        position: relative;
+    }
+
+    .recommendation-card .favorite-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 35px;
+        height: 35px;
+        border: none;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.9);
+        color: #666;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3;
+        font-size: 16px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
 
     .recommendation-card:hover {
@@ -265,8 +361,8 @@
 
     .event-btn {
         background: rgba(255,255,255,0.2);
-        border: 2px solid white;
-        color: white;
+        border: 2px solid black;
+        color: #bac2e6;
         padding: 10px 20px;
         border-radius: 25px;
         text-decoration: none;
@@ -302,7 +398,7 @@
 
     .placeholder-image {
         width: 100%;
-        height: 220px;
+        height: 100%;
         background: linear-gradient(45deg, #667eea, #764ba2);
         display: flex;
         align-items: center;
@@ -310,16 +406,20 @@
         color: white;
         font-weight: bold;
         text-align: center;
-        border-radius: 10px 10px 0 0;
+        border-radius: 10px;
+        font-size: 14px;
+        padding: 10px;
+        box-sizing: border-box;
+        position: relative;
     }
 
     @media (max-width: 768px) {
         .top-10-grid {
-            gap: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
         }
         
         .top-10-item {
-            min-width: 150px;
             height: 220px;
         }
         
@@ -329,6 +429,16 @@
         
         .events-grid {
             grid-template-columns: 1fr;
+        }
+        
+        .rank-number {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+        }
+        
+        .book-title {
+            font-size: 12px;
         }
     }
 </style>
@@ -347,12 +457,11 @@
             {% for book in top_10_books %}
             <div class="top-10-item" onclick="addToBookshelf('{{ book.id }}')">
                 <div class="rank-number">{{ book.rank }}</div>
-                {% if book.img and book.img != 'book5.jpg' and book.img != 'ebook1.jpg' %}
-                    <img src="{{ url_for('static', filename=book.img) }}" alt="{{ book.title }}" class="book-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                    <div class="placeholder-image" style="display: none;">{{ book.title }}</div>
-                {% else %}
-                    <div class="placeholder-image">{{ book.title }}</div>
-                {% endif %}
+                <button class="favorite-btn" onclick="event.stopPropagation(); toggleFavorite(this, '{{ book.id }}')">
+                    <i class="fas fa-heart"></i>
+                </button>
+                <!-- Always use placeholder since img folder is empty -->
+                <div class="placeholder-image">{{ book.title }}</div>
                 <div class="book-info">
                     <h3 class="book-title">{{ book.title }}</h3>
                 </div>
@@ -428,11 +537,18 @@
 function addToBookshelf(bookId) {
     console.log('addToBookshelf called with bookId:', bookId);
     
-    // Show a loading state
+    // Find all buttons for this book (including heart buttons)
     const buttons = document.querySelectorAll(`button[onclick*="${bookId}"]`);
+    const heartButtons = document.querySelectorAll(`button[onclick*="toggleFavorite(this, '${bookId}')"]`);
+    
+    // Show loading state for action buttons only (not heart buttons)
     buttons.forEach(button => {
-        button.disabled = true;
-        button.textContent = 'Adding...';
+        if (!button.classList.contains('favorite-btn')) {
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.setAttribute('data-original-text', originalText);
+            button.textContent = 'Adding...';
+        }
     });
     
     fetch('/add_favorite', {
@@ -452,38 +568,256 @@ function addToBookshelf(bookId) {
         console.log('Response data:', data);
         if (data.status === 'success') {
             if (data.added_to_favorites) {
-                alert('Book added to your bookshelf!');
+                // Book was added to favorites
+                showNotification('Book added to your bookshelf!', 'success');
+                
+                // Update action buttons
                 buttons.forEach(button => {
-                    button.textContent = 'Added ✓';
-                    button.style.backgroundColor = '#28a745';
+                    if (!button.classList.contains('favorite-btn')) {
+                        button.textContent = 'Added ✓';
+                        button.style.backgroundColor = '#28a745';
+                        button.style.borderColor = '#28a745';
+                        button.disabled = false;
+                    }
                 });
-            } else {
-                alert('Book removed from your bookshelf!');
+                
+                // Update heart buttons to active state
+                heartButtons.forEach(heartBtn => {
+                    heartBtn.classList.add('active');
+                });
+                
+            } else if (data.removed_from_favorites) {
+                // Book was removed from favorites
+                showNotification('Book removed from your bookshelf!', 'info');
+                
+                // Update action buttons
                 buttons.forEach(button => {
-                    button.textContent = 'Add to Bookshelf';
-                    button.disabled = false;
-                    button.style.backgroundColor = '';
+                    if (!button.classList.contains('favorite-btn')) {
+                        const originalText = button.getAttribute('data-original-text') || 'Add to Bookshelf';
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        button.style.backgroundColor = '';
+                        button.style.borderColor = '';
+                    }
+                });
+                
+                // Update heart buttons to inactive state
+                heartButtons.forEach(heartBtn => {
+                    heartBtn.classList.remove('active');
                 });
             }
         } else {
             console.error('Server error:', data.message);
-            alert('Error: ' + (data.message || 'Unknown error occurred'));
+            showNotification('Error: ' + (data.message || 'Unknown error occurred'), 'error');
+            
             // Reset button state
             buttons.forEach(button => {
-                button.disabled = false;
-                button.textContent = 'Add to Bookshelf';
+                if (!button.classList.contains('favorite-btn')) {
+                    const originalText = button.getAttribute('data-original-text') || 'Add to Bookshelf';
+                    button.disabled = false;
+                    button.textContent = originalText;
+                }
             });
         }
     })
     .catch(error => {
         console.error('Network/JS Error:', error);
-        alert('Error adding book to bookshelf: ' + error.message);
+        showNotification('Error adding book to bookshelf: ' + error.message, 'error');
+        
         // Reset button state
         buttons.forEach(button => {
-            button.disabled = false;
-            button.textContent = 'Add to Bookshelf';
+            if (!button.classList.contains('favorite-btn')) {
+                const originalText = button.getAttribute('data-original-text') || 'Add to Bookshelf';
+                button.disabled = false;
+                button.textContent = originalText;
+            }
         });
     });
+}
+
+function toggleFavorite(button, bookId) {
+    console.log('toggleFavorite called with bookId:', bookId);
+    
+    // Add loading state
+    button.classList.add('loading');
+    
+    // Create request payload
+    const payload = {
+        book_id: parseInt(bookId) || bookId
+    };
+    
+    // Send request to server
+    fetch('/add_favorite', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Toggle favorite response:', data);
+        
+        if (data.status === 'success') {
+            // Find all related buttons for this book
+            const actionButtons = document.querySelectorAll(`button[onclick*="addToBookshelf('${bookId}')"]`);
+            const allHeartButtons = document.querySelectorAll(`button[onclick*="toggleFavorite(this, '${bookId}')"]`);
+            
+            if (data.added_to_favorites) {
+                // Book was successfully added to favorites
+                allHeartButtons.forEach(heartBtn => {
+                    heartBtn.classList.add('active');
+                });
+                
+                // Update action buttons to show "Added" state
+                actionButtons.forEach(actionBtn => {
+                    if (!actionBtn.classList.contains('favorite-btn')) {
+                        const originalText = actionBtn.getAttribute('data-original-text') || actionBtn.textContent;
+                        actionBtn.setAttribute('data-original-text', originalText);
+                        actionBtn.textContent = 'Added ✓';
+                        actionBtn.style.backgroundColor = '#28a745';
+                        actionBtn.style.borderColor = '#28a745';
+                        actionBtn.disabled = false;
+                    }
+                });
+                
+                showNotification('Added to favorites!', 'success');
+                
+            } else if (data.removed_from_favorites) {
+                // Book was successfully removed from favorites
+                allHeartButtons.forEach(heartBtn => {
+                    heartBtn.classList.remove('active');
+                });
+                
+                // Update action buttons to show original state
+                actionButtons.forEach(actionBtn => {
+                    if (!actionBtn.classList.contains('favorite-btn')) {
+                        const originalText = actionBtn.getAttribute('data-original-text') || 'Add to Bookshelf';
+                        actionBtn.textContent = originalText;
+                        actionBtn.style.backgroundColor = '';
+                        actionBtn.style.borderColor = '';
+                        actionBtn.disabled = false;
+                    }
+                });
+                
+                showNotification('Removed from favorites!', 'info');
+            }
+        } else {
+            showNotification('Error: ' + data.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error toggling favorite:', error);
+        showNotification('Failed to update favorites. Please try again.', 'error');
+    })
+    .finally(() => {
+        // Remove loading state
+        button.classList.remove('loading');
+    });
+}
+
+function showNotification(message, type) {
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.dynamic-notification');
+    existingNotifications.forEach(notification => notification.remove());
+    
+    // Create new notification
+    const notification = document.createElement('div');
+    notification.className = 'dynamic-notification';
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8'};
+        color: white;
+        border-radius: 8px;
+        z-index: 10000;
+        font-weight: 600;
+        font-size: 14px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        transform: translateX(400px);
+        transition: transform 0.3s ease, opacity 0.3s ease;
+        opacity: 0;
+        max-width: 300px;
+        word-wrap: break-word;
+    `;
+    
+    // Add icon based on type
+    const icon = type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ';
+    notification.innerHTML = `<span style="margin-right: 8px;">${icon}</span>${message}`;
+    
+    document.body.appendChild(notification);
+    
+    // Trigger animation
+    setTimeout(() => {
+        notification.style.transform = 'translateX(0)';
+        notification.style.opacity = '1';
+    }, 10);
+    
+    // Auto-remove after 4 seconds
+    setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.remove();
+            }
+        }, 300);
+    }, 4000);
+}
+
+// Load user favorites when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadUserFavorites();
+});
+
+function loadUserFavorites() {
+    fetch('/api/library_data')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success' && data.data.favorites) {
+                const favorites = data.data.favorites;
+                console.log('Loaded user favorites:', favorites);
+                
+                // Update heart icons and action buttons based on user favorites
+                document.querySelectorAll('.favorite-btn').forEach(button => {
+                    const onclickAttr = button.getAttribute('onclick');
+                    if (onclickAttr) {
+                        const bookIdMatch = onclickAttr.match(/'([^']+)'/);
+                        if (bookIdMatch) {
+                            const bookId = bookIdMatch[1];
+                            const isBookFavorited = favorites.includes(parseInt(bookId)) || favorites.includes(bookId);
+                            
+                            if (isBookFavorited) {
+                                // Mark heart as active
+                                button.classList.add('active');
+                                
+                                // Find and update corresponding action buttons
+                                const actionButtons = document.querySelectorAll(`button[onclick*="addToBookshelf('${bookId}')"]`);
+                                actionButtons.forEach(actionBtn => {
+                                    if (!actionBtn.classList.contains('favorite-btn')) {
+                                        const originalText = actionBtn.textContent;
+                                        actionBtn.setAttribute('data-original-text', originalText);
+                                        actionBtn.textContent = 'Added ✓';
+                                        actionBtn.style.backgroundColor = '#28a745';
+                                        actionBtn.style.borderColor = '#28a745';
+                                    }
+                                });
+                            }
+                        }
+                    }
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error loading user favorites:', error);
+        });
 }
 </script>
 {% endblock %}

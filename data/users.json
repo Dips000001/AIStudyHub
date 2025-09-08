@@ -144,10 +144,7 @@
     "role": "Student",
     "year": "Year3",
     "major": "Undecided",
-    "favorites": [
-      5,
-      6
-    ],
+    "favorites": [],
     "my_bookshelf": [],
     "followers": 0,
     "following": 0,

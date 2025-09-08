@@ -268,62 +268,150 @@ def recommendations():
     top_10_books = ranked_books
     
     # Generate personalized suggestions based on GPA/performance (using real data)
-    user_gpa = current_user.get('gpa', 3.5)  # Default GPA
+    user_gpa = current_user.get('gpa', 3.0)  # Default GPA
+    user_favorites = current_user.get('favorites', [])
+    user_borrowed = current_user.get('borrowed_books', [])
+    
+    # Create a list of books user already has to avoid recommending them again
+    already_has_books = set(user_favorites + user_borrowed)
+    
+    # Generate personalized recommendations based on user's major and performance
     personalized_books = []
     
-    # Find specific books by ID from our book_lookup
-    if user_gpa >= 3.7:  # High performers
-        book_ids = [4, 2, 14]  # Database Systems, Advanced Programming, Algorithm Study Guide
+    # Filter books by subject matching user's major
+    relevant_books = []
+    for book in all_books:
+        # Skip books user already has
+        if book['id'] in already_has_books:
+            continue
+            
+        book_subject = book.get('subject', '').lower()
+        user_major_lower = user_major.lower()
+        
+        # Match books to user's major
+        if ('computer science' in user_major_lower and 'computer science' in book_subject) or \
+           ('mathematics' in user_major_lower and 'mathematics' in book_subject) or \
+           ('engineering' in user_major_lower and ('computer science' in book_subject or 'mathematics' in book_subject)):
+            relevant_books.append(book)
+    
+    # Sort by level/difficulty based on GPA
+    if user_gpa >= 3.7:  # High performers - recommend advanced books
+        target_levels = ['Advanced', 'Intermediate', 'Beginner']
         reasons = [
-            'Perfect for high achievers - advanced database concepts',
-            'Expand your skills with advanced programming paradigms',
-            'Prepare for advanced algorithm courses'
+            'Perfect for high achievers - expand your expertise',
+            'Challenge yourself with advanced concepts',
+            'Deepen your understanding of core topics'
         ]
-    elif user_gpa >= 3.0:  # Average performers
-        book_ids = [5, 7, 3]  # Python Programming, CS101 Notes, Data Structures
+    elif user_gpa >= 3.0:  # Average performers - mix of intermediate and beginner
+        target_levels = ['Intermediate', 'Beginner', 'Advanced']
         reasons = [
-            'Strengthen your programming fundamentals',
-            'Review course materials to improve performance',
-            'Master essential data structures and algorithms'
+            'Great for strengthening your skills',
+            'Build a solid foundation in your field',
+            'Perfect for your current academic level'
         ]
-    else:  # Need support
-        book_ids = [1, 7, 8]  # Intro to CS, Course Notes, Lab Instructions
+    else:  # Need support - focus on fundamentals
+        target_levels = ['Beginner', 'Intermediate']
         reasons = [
-            'Build strong foundation with computer science basics',
-            'Essential study methods from course notes',
-            'Step-by-step guidance with lab instructions'
+            'Build strong fundamentals to improve performance',
+            'Essential knowledge for academic success',
+            'Comprehensive guide to core concepts'
         ]
     
-    for i, book_id in enumerate(book_ids):
-        if book_id in book_lookup:
-            book = book_lookup[book_id]
+    # Select personalized books
+    books_added = 0
+    for target_level in target_levels:
+        if books_added >= 3:  # Limit to 3 recommendations
+            break
+            
+        for book in relevant_books:
+            if books_added >= 3:
+                break
+                
+            book_level = book.get('level', 'Beginner')
+            if book_level == target_level:
+                personalized_books.append({
+                    'id': book['id'],
+                    'title': book['title'],
+                    'reason': reasons[min(books_added, len(reasons)-1)]
+                })
+                books_added += 1
+    
+    # If we don't have enough major-specific books, add some general study materials
+    if books_added < 3:
+        general_books = [book for book in all_books 
+                        if book['id'] not in already_has_books and 
+                        book.get('subject', '').lower() in ['study skills', 'general']]
+        
+        for book in general_books[:3-books_added]:
             personalized_books.append({
                 'id': book['id'],
                 'title': book['title'],
-                'reason': reasons[i]
+                'reason': 'Recommended for academic success'
             })
-    
-    # Course-based recommendations (using real course materials)
-    registered_courses = ['CS101', 'CS201', 'MATH150']  # Sample courses
+
+    # Course-based recommendations (using real user data)
+    registered_courses = current_user.get('registered_courses', [])
     course_books = []
     
-    # Find course-related books
-    course_book_mapping = {
-        'CS101': {'id': 7, 'reason': 'Comprehensive lecture notes for your current course'},
-        'CS201': {'id': 14, 'reason': 'Complete study guide for algorithm topics'},
-        'MATH150': {'id': 15, 'reason': 'Essential formulas and reference material'}
-    }
-    
+    # Find course-related materials from internal_materials
     for course in registered_courses:
-        if course in course_book_mapping:
-            book_id = course_book_mapping[course]['id']
-            if book_id in book_lookup:
-                book = book_lookup[book_id]
+        course_materials = []
+        for book in internal_materials:
+            if book.get('course', '') == course and book['id'] not in already_has_books:
+                course_materials.append(book)
+        
+        # Also check library books and ebooks for course-related content
+        for book in library_books + ebooks:
+            if book['id'] not in already_has_books:
+                book_title_lower = book.get('title', '').lower()
+                course_lower = course.lower()
+                
+                # Match course code in title or if it's a relevant subject
+                if (course_lower in book_title_lower or 
+                    (course.startswith('CS') and book.get('subject', '').lower() == 'computer science') or
+                    (course.startswith('MATH') and book.get('subject', '').lower() == 'mathematics')):
+                    course_materials.append(book)
+        
+        # Add the best match for each course
+        if course_materials:
+            best_match = course_materials[0]  # Take the first match
+            
+            # Generate reason based on book type
+            if best_match.get('documentType'):
+                reason = f"Essential {best_match.get('documentType', 'material')} for {course}"
+            elif best_match.get('level'):
+                reason = f"{best_match.get('level', 'Essential')} resource for {course}"
+            else:
+                reason = f"Recommended reading for {course}"
+                
+            course_books.append({
+                'id': best_match['id'],
+                'title': best_match['title'],
+                'course': course,
+                'reason': reason
+            })
+    
+    # If user has no registered courses, suggest some based on their major and year
+    if not course_books:
+        default_courses = []
+        if 'computer science' in user_major.lower():
+            if user_year in ['Year1', 'Year 1']:
+                default_courses = ['CS101']
+            elif user_year in ['Year2', 'Year 2']:
+                default_courses = ['CS201', 'MATH150']
+            else:
+                default_courses = ['CS201']
+        
+        for course in default_courses:
+            course_materials = [book for book in internal_materials 
+                              if book.get('course', '') == course and book['id'] not in already_has_books]
+            if course_materials:
+                book = course_materials[0]
                 course_books.append({
                     'id': book['id'],
                     'title': book['title'],
                     'course': course,
-                    'reason': course_book_mapping[course]['reason']
+                    'reason': f"Recommended for {user_major} students"
                 })
     
     # Latest events and promotions
@@ -350,6 +438,17 @@ def recommendations():
             'link': '#'
         }
     ]
+    
+    # Debug: Print recommendation details
+    print(f"=== RECOMMENDATIONS DEBUG for {username} ===")
+    print(f"User GPA: {user_gpa}")
+    print(f"User Major: {user_major}")
+    print(f"Registered Courses: {registered_courses}")
+    print(f"User Favorites: {user_favorites}")
+    print(f"User Borrowed: {user_borrowed}")
+    print(f"Personalized Books Count: {len(personalized_books)}")
+    print(f"Course Books Count: {len(course_books)}")
+    print("=== END DEBUG ===")
     
     return render_template('recommendations.html', 
                          user=current_user,
