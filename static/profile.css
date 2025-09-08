@@ -984,3 +984,245 @@
     cursor: pointer;
     margin-top: 15px;
 }
+
+/* Resources Allocated Section */
+.resources-allocated {
+    margin-bottom: 2rem;
+}
+
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding: 1.5rem 0;
+}
+
+.resource-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    position: relative;
+}
+
+.resource-item:hover {
+    transform: translateY(-5px);
+}
+
+.resource-chart {
+    position: relative;
+    margin-bottom: 0.75rem;
+    transform: scale(0.8);
+}
+
+.progress-ring {
+    transform: rotate(-90deg);
+    width: 100px;
+    height: 100px;
+}
+
+.progress-ring-circle-bg {
+    fill: none;
+    stroke: #e9ecef;
+    stroke-width: 6;
+}
+
+.progress-ring-circle {
+    fill: none;
+    stroke-width: 6;
+    stroke-linecap: round;
+    stroke-dasharray: 251.33; /* 2 * π * 40 (adjusted for smaller radius) */
+    stroke-dashoffset: 251.33;
+    transition: stroke-dashoffset 1s ease-in-out;
+}
+
+.resource-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    color: #333;
+}
+
+.resource-percentage {
+    position: absolute;
+    top: 65%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+}
+
+.resource-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    text-align: center;
+}
+
+/* Resource Modal */
+.resource-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.resource-modal-content {
+    background-color: white;
+    margin: 10% auto;
+    padding: 2rem;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resource-modal-close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.resource-modal-close:hover {
+    color: #333;
+}
+
+#resourceModalTitle {
+    margin: 0 0 1.5rem 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.modal-detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.modal-detail-item:last-child {
+    border-bottom: none;
+}
+
+.modal-detail-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.modal-detail-value {
+    color: #666;
+    font-weight: 600;
+}
+
+/* Resource Tooltip */
+.resource-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.resource-tooltip.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.resource-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.9) transparent transparent transparent;
+}
+
+/* Progress Ring Colors */
+.progress-ring-circle[data-color="#e91e63"] {
+    stroke: #e91e63;
+}
+
+.progress-ring-circle[data-color="#9e9e9e"] {
+    stroke: #9e9e9e;
+}
+
+.progress-ring-circle[data-color="#4caf50"] {
+    stroke: #4caf50;
+}
+
+.progress-ring-circle[data-color="#ff5722"] {
+    stroke: #ff5722;
+}
+
+/* Responsive Design for Resources */
+@media (max-width: 768px) {
+    .resources-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+    }
+    
+    .resource-chart {
+        transform: scale(0.7);
+    }
+    
+    .resource-label {
+        font-size: 0.85rem;
+    }
+    
+    .resource-modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .resources-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.25rem;
+    }
+    
+    .resource-chart {
+        transform: scale(0.6);
+    }
+    
+    .resource-label {
+        font-size: 0.75rem;
+    }
+}

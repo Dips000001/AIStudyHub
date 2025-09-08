@@ -198,3 +198,180 @@ window.ProfileModule = {
     editProfile,
     followUser
 };
+
+// Resources Allocated Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    initializeResources();
+});
+
+function initializeResources() {
+    // Resource data
+    const resourceData = {
+        printing: {
+            title: 'Printing Quota',
+            used: 750,
+            total: 1000,
+            unit: 'pages',
+            color: '#e91e63',
+            details: {
+                'Total Quota': '1000 pages',
+                'Used': '750 pages',
+                'Remaining': '250 pages',
+                'Reset Date': 'September 30, 2025',
+                'Last Used': 'September 7, 2025'
+            }
+        },
+        studyroom: {
+            title: 'Study Room Hours',
+            used: 18,
+            total: 40,
+            unit: 'hours',
+            color: '#9e9e9e',
+            details: {
+                'Total Quota': '40 hours/month',
+                'Used': '18 hours',
+                'Remaining': '22 hours',
+                'Reset Date': 'September 30, 2025',
+                'Last Booking': 'September 5, 2025'
+            }
+        },
+        devices: {
+            title: 'Device Lending',
+            used: 27,
+            total: 30,
+            unit: 'days',
+            color: '#4caf50',
+            details: {
+                'Total Quota': '30 days/month',
+                'Used': '27 days',
+                'Remaining': '3 days',
+                'Reset Date': 'September 30, 2025',
+                'Current Device': 'iPad Pro (due Sep 12)'
+            }
+        },
+        workshops: {
+            title: 'Workshop Bookings',
+            used: 1,
+            total: 4,
+            unit: 'bookings',
+            color: '#ff5722',
+            details: {
+                'Total Quota': '4 bookings/month',
+                'Used': '1 booking',
+                'Remaining': '3 bookings',
+                'Reset Date': 'September 30, 2025',
+                'Next Workshop': '3D Printer Intro (Sep 10)'
+            }
+        }
+    };
+
+    // Initialize progress rings
+    document.querySelectorAll('.resource-item').forEach(item => {
+        const resourceType = item.dataset.resource;
+        const data = resourceData[resourceType];
+        const percentage = Math.round((data.used / data.total) * 100);
+        
+        // Animate progress ring
+        const circle = item.querySelector('.progress-ring-circle');
+        if (circle) {
+            const circumference = 2 * Math.PI * 40; // radius = 40 (updated for smaller charts)
+            const offset = circumference - (percentage / 100) * circumference;
+            
+            setTimeout(() => {
+                circle.style.strokeDashoffset = offset;
+            }, 500);
+        }
+        
+        // Add click event for modal
+        item.addEventListener('click', () => {
+            showResourceModal(resourceType, data);
+        });
+        
+        // Add hover events for tooltip
+        item.addEventListener('mouseenter', (e) => {
+            showResourceTooltip(e, data, percentage);
+        });
+        
+        item.addEventListener('mouseleave', () => {
+            hideResourceTooltip();
+        });
+        
+        item.addEventListener('mousemove', (e) => {
+            updateTooltipPosition(e);
+        });
+    });
+    
+    // Modal close functionality
+    const modal = document.getElementById('resourceModal');
+    const closeBtn = document.querySelector('.resource-modal-close');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+
+function showResourceModal(resourceType, data) {
+    const modal = document.getElementById('resourceModal');
+    const title = document.getElementById('resourceModalTitle');
+    const body = document.getElementById('resourceModalBody');
+    
+    title.textContent = data.title;
+    
+    // Create modal content
+    let modalContent = '';
+    for (const [key, value] of Object.entries(data.details)) {
+        modalContent += `
+            <div class="modal-detail-item">
+                <span class="modal-detail-label">${key}:</span>
+                <span class="modal-detail-value">${value}</span>
+            </div>
+        `;
+    }
+    
+    body.innerHTML = modalContent;
+    modal.style.display = 'block';
+}
+
+function showResourceTooltip(e, data, percentage) {
+    const tooltip = document.getElementById('resourceTooltip');
+    const remaining = data.total - data.used;
+    
+    tooltip.innerHTML = `
+        <strong>${data.title}</strong><br>
+        Used: ${data.used} ${data.unit} (${percentage}%)<br>
+        Remaining: ${remaining} ${data.unit}
+    `;
+    
+    tooltip.classList.add('show');
+    updateTooltipPosition(e);
+}
+
+function hideResourceTooltip() {
+    const tooltip = document.getElementById('resourceTooltip');
+    tooltip.classList.remove('show');
+}
+
+function updateTooltipPosition(e) {
+    const tooltip = document.getElementById('resourceTooltip');
+    const rect = tooltip.getBoundingClientRect();
+    
+    let left = e.pageX - rect.width / 2;
+    let top = e.pageY - rect.height - 10;
+    
+    // Prevent tooltip from going off screen
+    if (left < 0) left = 10;
+    if (left + rect.width > window.innerWidth) left = window.innerWidth - rect.width - 10;
+    if (top < 0) top = e.pageY + 10;
+    
+    tooltip.style.left = left + 'px';
+    tooltip.style.top = top + 'px';
+}
