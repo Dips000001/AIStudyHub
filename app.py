@@ -761,6 +761,13 @@ def profile():
         
     return render_template('profile.html', user=user_data)
 
+@app.route('/settings')
+def settings():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('settings.html')
+
+
 if __name__ == '__main__':
     # Ensure data directory exists
     os.makedirs(DATA_DIR, exist_ok=True)
