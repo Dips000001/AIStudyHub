@@ -29,8 +29,32 @@ function removeProfilePicture() {
     if (profileImg) {
         // Reset to default avatar
         profileImg.src = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjNjc3ZWVhIi8+Cjx0ZXh0IHg9IjUwIiB5PSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMCI+VTwvdGV4dD4KPHN2Zz4=";
+        
+        // Update avatar in database
+        const data = {
+            avatar: 'profile_avatar.png' // Reset to default
+        };
+        
+        fetch('/api/update-settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.status === 'success') {
+                showNotification('Profile picture removed successfully', 'success');
+            } else {
+                showNotification('Error removing profile picture', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Error removing profile picture', 'error');
+        });
     }
-    showNotification('Profile picture removed successfully', 'success');
 }
 
 // Form reset functionality
@@ -232,14 +256,41 @@ function handleProfileFormSubmit(event) {
     
     // Get form data
     const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    const firstName = formData.get('firstName');
+    const lastName = formData.get('lastName');
+    const email = formData.get('email');
+    const phone = formData.get('phone');
+    const bio = formData.get('bio');
     
-    // Simulate API call
-    setTimeout(() => {
-        showNotification('Profile updated successfully!', 'success');
-    }, 1000);
+    const data = {
+        name: `${firstName} ${lastName}`.trim(),
+        email: email,
+        phone: phone,
+        bio: bio
+    };
     
     showNotification('Updating profile...', 'info');
+    
+    // Make API call to update profile
+    fetch('/api/update-settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            showNotification('Profile updated successfully!', 'success');
+        } else {
+            showNotification('Error updating profile: ' + result.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error updating profile. Please try again.', 'error');
+    });
 }
 
 function handlePasswordFormSubmit(event) {
@@ -260,21 +311,65 @@ function handlePasswordFormSubmit(event) {
         return;
     }
     
-    // Simulate API call
+    const data = {
+        current_password: currentPassword,
+        new_password: newPassword
+    };
+    
     showNotification('Updating password...', 'info');
-    setTimeout(() => {
-        showNotification('Password updated successfully!', 'success');
-        event.target.reset();
-    }, 1000);
+    
+    // Make API call to update password
+    fetch('/api/update-password', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            showNotification('Password updated successfully!', 'success');
+            event.target.reset();
+        } else {
+            showNotification('Error updating password: ' + result.message, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error updating password. Please try again.', 'error');
+    });
 }
 
 // Theme handling
 function handleThemeChange(theme) {
-    // In a real application, this would apply the theme
-    showNotification(`Theme changed to ${theme}`, 'success');
+    const data = {
+        preferences: {
+            theme: theme
+        }
+    };
     
-    // Store preference
-    localStorage.setItem('theme', theme);
+    // Make API call to update theme preference
+    fetch('/api/update-settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            showNotification(`Theme changed to ${theme}`, 'success');
+            localStorage.setItem('theme', theme);
+        } else {
+            showNotification('Error updating theme preference', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error updating theme preference', 'error');
+    });
 }
 
 // Initialize page
@@ -318,9 +413,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (profileImg) {
                         profileImg.src = e.target.result;
                     }
+                    
+                    // Update avatar in database
+                    const data = {
+                        avatar: file.name // In a real app, you'd upload the file first
+                    };
+                    
+                    fetch('/api/update-settings', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.status === 'success') {
+                            showNotification('Profile picture updated!', 'success');
+                        } else {
+                            showNotification('Error updating profile picture', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        showNotification('Error updating profile picture', 'error');
+                    });
                 };
                 reader.readAsDataURL(file);
-                showNotification('Profile picture updated!', 'success');
             }
         });
     }
@@ -351,7 +470,50 @@ document.addEventListener('DOMContentLoaded', function() {
         toggle.addEventListener('change', function() {
             const label = this.closest('.toggle-setting').querySelector('.toggle-label').textContent;
             const status = this.checked ? 'enabled' : 'disabled';
-            showNotification(`${label} ${status}`, 'info');
+            
+            // Map form IDs to preference keys
+            const preferenceKey = mapFormIdToPreferenceKey(this.id);
+            if (preferenceKey) {
+                updatePreference(preferenceKey, this.checked);
+                showNotification(`${label} ${status}`, 'info');
+            }
+        });
+    });
+    
+    // Set up select dropdowns for preferences
+    const preferenceSelects = document.querySelectorAll('#theme, #language, #timezone');
+    preferenceSelects.forEach(select => {
+        select.addEventListener('change', function() {
+            if (this.id === 'theme') {
+                handleThemeChange(this.value);
+            } else {
+                const preferenceKey = this.id;
+                const data = {
+                    preferences: {
+                        [preferenceKey]: this.value
+                    }
+                };
+                
+                fetch('/api/update-settings', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        showNotification(`${this.id} updated to ${this.value}`, 'success');
+                    } else {
+                        showNotification('Error updating preference', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showNotification('Error updating preference', 'error');
+                });
+            }
         });
     });
     
@@ -370,45 +532,68 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // Load user preferences (mock data)
-    loadUserPreferences();
+    // Load user preferences (this is now handled by the server-side template)
+    // loadUserPreferences(); // Removed - preferences are now loaded from server
 });
 
-// Load user preferences
-function loadUserPreferences() {
-    // In a real application, this would load from an API
-    const mockPreferences = {
-        theme: localStorage.getItem('theme') || 'light',
-        language: 'en',
-        timezone: 'UTC',
-        autoBookmark: true,
-        readingReminders: true,
-        emailNewBooks: true,
-        emailReminders: true,
-        emailUpdates: false,
-        pushReminders: true,
-        pushEvents: true,
-        profileVisibility: true,
-        dataAnalytics: true,
-        twoFactorAuth: false
+// Map form IDs to preference keys in the database structure
+function mapFormIdToPreferenceKey(formId) {
+    const mapping = {
+        'autoBookmark': 'auto_bookmark',
+        'readingReminders': 'reading_reminders',
+        'emailNewBooks': 'email_notifications.new_books',
+        'emailReminders': 'email_notifications.reminders',
+        'emailUpdates': 'email_notifications.updates',
+        'pushReminders': 'push_notifications.reminders',
+        'pushEvents': 'push_notifications.events',
+        'profileVisibility': 'privacy.public_profile',
+        'dataAnalytics': 'privacy.usage_analytics',
+        'twoFactorAuth': 'two_factor_auth'
     };
-    
-    // Apply preferences to form elements
-    Object.keys(mockPreferences).forEach(key => {
-        const element = document.getElementById(key);
-        if (element) {
-            if (element.type === 'checkbox') {
-                element.checked = mockPreferences[key];
-            } else {
-                element.value = mockPreferences[key];
-            }
-        }
-    });
+    return mapping[formId];
 }
 
-// Save preferences
-function savePreferences() {
-    // This would typically be called when forms are submitted
-    // or when toggle switches are changed
-    showNotification('Preferences saved successfully!', 'success');
+// Handle nested preference updates
+function updatePreference(key, value) {
+    let data = { preferences: {} };
+    
+    // Handle nested keys like 'email_notifications.new_books'
+    if (key.includes('.')) {
+        const parts = key.split('.');
+        if (parts.length === 2) {
+            data.preferences[parts[0]] = { [parts[1]]: value };
+        }
+    } else {
+        data.preferences[key] = value;
+    }
+    
+    fetch('/api/update-settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+        if (result.status === 'success') {
+            // Success notification handled by the toggle event
+        } else {
+            showNotification('Error updating preference', 'error');
+            // Revert the toggle if update failed
+            const element = document.getElementById(key);
+            if (element && element.type === 'checkbox') {
+                element.checked = !value;
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showNotification('Error updating preference', 'error');
+        // Revert the toggle if update failed
+        const element = document.getElementById(key);
+        if (element && element.type === 'checkbox') {
+            element.checked = !value;
+        }
+    });
 }

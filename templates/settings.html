@@ -51,12 +51,16 @@
                 <p>Update your personal details and profile picture</p>
             </div>
             
-            <form class="settings-form" id="profileForm">
+            <form class="settings-form" id="profileForm" onsubmit="handleProfileFormSubmit(event)">
                 <div class="form-group">
                     <label for="profilePicture">Profile Picture</label>
                     <div class="profile-picture-upload">
                         <div class="current-picture">
-                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMCI+VTwvdGV4dD4KPHN2Zz4=" alt="Profile Picture" id="profileImg">
+                            {% if user.avatar and user.avatar != 'profile_avatar.png' %}
+                                <img src="{{ url_for('static', filename='img/' + user.avatar) }}" alt="Profile Picture" id="profileImg">
+                            {% else %}
+                                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMCI+{{ user.name[0]|upper if user.name else user.username[0]|upper }}</text></svg>" alt="Profile Picture" id="profileImg">
+                            {% endif %}
                         </div>
                         <div class="upload-controls">
                             <input type="file" id="profilePicture" accept="image/*" style="display: none;">
@@ -73,27 +77,27 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstName">First Name</label>
-                        <input type="text" id="firstName" name="firstName" value="{{ session.username or 'John' }}" required>
+                        <input type="text" id="firstName" name="firstName" value="{{ user.name.split()[0] if user.name and ' ' in user.name else user.name or user.username }}" required>
                     </div>
                     <div class="form-group">
                         <label for="lastName">Last Name</label>
-                        <input type="text" id="lastName" name="lastName" value="Doe" required>
+                        <input type="text" id="lastName" name="lastName" value="{{ user.name.split()[1] if user.name and ' ' in user.name else '' }}" required>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="email">Email Address</label>
-                    <input type="email" id="email" name="email" value="john.doe@example.com" required>
+                    <input type="email" id="email" name="email" value="{{ user.email or user.username + '@richmond.edu' }}" required>
                 </div>
 
                 <div class="form-group">
                     <label for="phone">Phone Number</label>
-                    <input type="tel" id="phone" name="phone" value="+1 (555) 123-4567">
+                    <input type="tel" id="phone" name="phone" value="{{ user.phone or '+1 (555) 123-4567' }}">
                 </div>
 
                 <div class="form-group">
                     <label for="bio">Bio</label>
-                    <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">Passionate reader and lifelong learner. Currently pursuing computer science with a focus on AI and machine learning.</textarea>
+                    <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">{{ user.bio or 'Passionate reader and lifelong learner. Currently pursuing ' + (user.major or 'computer science') + '.' }}</textarea>
                 </div>
 
                 <div class="form-actions">
@@ -117,7 +121,7 @@
             <!-- Change Password -->
             <div class="settings-card">
                 <h4>Change Password</h4>
-                <form class="settings-form" id="passwordForm">
+                <form class="settings-form" id="passwordForm" onsubmit="handlePasswordFormSubmit(event)">
                     <div class="form-group">
                         <label for="currentPassword">Current Password</label>
                         <input type="password" id="currentPassword" name="currentPassword" required>
@@ -177,29 +181,29 @@
                     <div class="preference-item">
                         <label for="theme">Theme</label>
                         <select id="theme" name="theme">
-                            <option value="light">Light</option>
-                            <option value="dark">Dark</option>
-                            <option value="auto">Auto (System)</option>
+                            <option value="light" {{ 'selected' if user.preferences.theme == 'light' else '' }}>Light</option>
+                            <option value="dark" {{ 'selected' if user.preferences.theme == 'dark' else '' }}>Dark</option>
+                            <option value="auto" {{ 'selected' if user.preferences.theme == 'auto' else '' }}>Auto (System)</option>
                         </select>
                     </div>
                     <div class="preference-item">
                         <label for="language">Language</label>
                         <select id="language" name="language">
-                            <option value="en">English</option>
-                            <option value="es">Español</option>
-                            <option value="fr">Français</option>
-                            <option value="de">Deutsch</option>
-                            <option value="zh">中文</option>
+                            <option value="en" {{ 'selected' if user.preferences.language == 'en' else '' }}>English</option>
+                            <option value="es" {{ 'selected' if user.preferences.language == 'es' else '' }}>Español</option>
+                            <option value="fr" {{ 'selected' if user.preferences.language == 'fr' else '' }}>Français</option>
+                            <option value="de" {{ 'selected' if user.preferences.language == 'de' else '' }}>Deutsch</option>
+                            <option value="zh" {{ 'selected' if user.preferences.language == 'zh' else '' }}>中文</option>
                         </select>
                     </div>
                     <div class="preference-item">
                         <label for="timezone">Timezone</label>
                         <select id="timezone" name="timezone">
-                            <option value="UTC">UTC</option>
-                            <option value="EST">Eastern Time</option>
-                            <option value="PST">Pacific Time</option>
-                            <option value="GMT">Greenwich Mean Time</option>
-                            <option value="JST">Japan Standard Time</option>
+                            <option value="UTC" {{ 'selected' if user.preferences.timezone == 'UTC' else '' }}>UTC</option>
+                            <option value="EST" {{ 'selected' if user.preferences.timezone == 'EST' else '' }}>Eastern Time</option>
+                            <option value="PST" {{ 'selected' if user.preferences.timezone == 'PST' else '' }}>Pacific Time</option>
+                            <option value="GMT" {{ 'selected' if user.preferences.timezone == 'GMT' else '' }}>Greenwich Mean Time</option>
+                            <option value="JST" {{ 'selected' if user.preferences.timezone == 'JST' else '' }}>Japan Standard Time</option>
                         </select>
                     </div>
                 </div>
@@ -210,7 +214,7 @@
                 <div class="preference-group">
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="autoBookmark" checked>
+                            <input type="checkbox" id="autoBookmark" {{ 'checked' if user.preferences.auto_bookmark else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -220,7 +224,7 @@
                     </div>
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="readingReminders" checked>
+                            <input type="checkbox" id="readingReminders" {{ 'checked' if user.preferences.reading_reminders else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -244,7 +248,7 @@
                 <div class="notification-group">
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="emailNewBooks" checked>
+                            <input type="checkbox" id="emailNewBooks" {{ 'checked' if user.preferences.email_notifications.new_books else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -254,7 +258,7 @@
                     </div>
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="emailReminders" checked>
+                            <input type="checkbox" id="emailReminders" {{ 'checked' if user.preferences.email_notifications.reminders else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -264,7 +268,7 @@
                     </div>
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="emailUpdates">
+                            <input type="checkbox" id="emailUpdates" {{ 'checked' if user.preferences.email_notifications.updates else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -280,7 +284,7 @@
                 <div class="notification-group">
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="pushReminders" checked>
+                            <input type="checkbox" id="pushReminders" {{ 'checked' if user.preferences.push_notifications.reminders else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -290,7 +294,7 @@
                     </div>
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="pushEvents" checked>
+                            <input type="checkbox" id="pushEvents" {{ 'checked' if user.preferences.push_notifications.events else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -314,7 +318,7 @@
                 <div class="privacy-group">
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="profileVisibility" checked>
+                            <input type="checkbox" id="profileVisibility" {{ 'checked' if user.preferences.privacy.public_profile else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -324,7 +328,7 @@
                     </div>
                     <div class="toggle-setting">
                         <label class="toggle-switch">
-                            <input type="checkbox" id="dataAnalytics" checked>
+                            <input type="checkbox" id="dataAnalytics" {{ 'checked' if user.preferences.privacy.usage_analytics else '' }}>
                             <span class="slider"></span>
                         </label>
                         <div class="toggle-info">
@@ -393,19 +397,19 @@
                 <h4>Account Statistics</h4>
                 <div class="stats-grid">
                     <div class="stat-item">
-                        <span class="stat-number">127</span>
+                        <span class="stat-number">{{ user.borrowed_books|length }}</span>
                         <span class="stat-label">Books Read</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">45</span>
+                        <span class="stat-number">{{ user.favorites|length }}</span>
                         <span class="stat-label">Bookmarks</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">2.3GB</span>
+                        <span class="stat-number">{{ user.data_used }}</span>
                         <span class="stat-label">Data Used</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-number">18 months</span>
+                        <span class="stat-number">{{ user.member_since }}</span>
                         <span class="stat-label">Member Since</span>
                     </div>
                 </div>

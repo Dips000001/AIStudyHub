@@ -953,7 +953,161 @@ def profile():
 def settings():
     if 'username' not in session:
         return redirect(url_for('index'))
-    return render_template('settings.html')
+    
+    username = session['username']
+    users = get_users()
+    bookings_data = get_bookings()
+    
+    # Calculate user statistics
+    user_bookings = [b for b in bookings_data.get('bookings', []) if b.get('user_id') == username]
+    
+    if username in users:
+        user_data = {
+            'name': users[username].get('name', username),
+            'username': username,
+            'email': users[username].get('email', ''),
+            'phone': users[username].get('phone', ''),
+            'bio': users[username].get('bio', ''),
+            'role': users[username].get('role', 'Student'),
+            'year': users[username].get('year', ''),
+            'major': users[username].get('major', ''),
+            'avatar': users[username].get('avatar', 'profile_avatar.png'),
+            'borrowed_books': users[username].get('borrowed_books', []),
+            'favorites': users[username].get('favorites', []),
+            'bookings_count': len(user_bookings),
+            'member_since': users[username].get('member_since', '18 months'),
+            'data_used': users[username].get('data_used', '2.3GB'),
+            'preferences': users[username].get('preferences', {
+                'theme': 'light',
+                'language': 'en',
+                'timezone': 'UTC',
+                'auto_bookmark': True,
+                'reading_reminders': True,
+                'email_notifications': {
+                    'new_books': True,
+                    'reminders': True,
+                    'updates': False
+                },
+                'push_notifications': {
+                    'reminders': True,
+                    'events': True
+                },
+                'privacy': {
+                    'public_profile': True,
+                    'usage_analytics': True
+                }
+            })
+        }
+    else:
+        user_data = {
+            'name': username,
+            'username': username,
+            'email': '',
+            'phone': '',
+            'bio': '',
+            'role': 'Student',
+            'year': '',
+            'major': '',
+            'avatar': 'profile_avatar.png',
+            'borrowed_books': [],
+            'favorites': [],
+            'bookings_count': 0,
+            'member_since': '0 months',
+            'data_used': '0MB',
+            'preferences': {
+                'theme': 'light',
+                'language': 'en',
+                'timezone': 'UTC',
+                'auto_bookmark': True,
+                'reading_reminders': True,
+                'email_notifications': {
+                    'new_books': True,
+                    'reminders': True,
+                    'updates': False
+                },
+                'push_notifications': {
+                    'reminders': True,
+                    'events': True
+                },
+                'privacy': {
+                    'public_profile': True,
+                    'usage_analytics': True
+                }
+            }
+        }
+    
+    return render_template('settings.html', user=user_data)
+
+@app.route('/api/update-settings', methods=['POST'])
+def update_settings():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'Not logged in'}), 401
+    
+    username = session['username']
+    users = get_users()
+    
+    if username not in users:
+        return jsonify({'status': 'error', 'message': 'User not found'}), 404
+    
+    data = request.get_json()
+    
+    # Update user profile information
+    if 'name' in data:
+        users[username]['name'] = data['name']
+    if 'email' in data:
+        users[username]['email'] = data['email']
+    if 'phone' in data:
+        users[username]['phone'] = data['phone']
+    if 'bio' in data:
+        users[username]['bio'] = data['bio']
+    
+    # Update preferences
+    if 'preferences' in data:
+        if 'preferences' not in users[username]:
+            users[username]['preferences'] = {}
+        
+        # Handle nested preference updates
+        for key, value in data['preferences'].items():
+            if isinstance(value, dict):
+                # Handle nested objects like email_notifications, push_notifications, privacy
+                if key not in users[username]['preferences']:
+                    users[username]['preferences'][key] = {}
+                users[username]['preferences'][key].update(value)
+            else:
+                # Handle direct preference updates
+                users[username]['preferences'][key] = value
+    
+    # Save updated user data
+    save_users(users)
+    
+    return jsonify({'status': 'success', 'message': 'Settings updated successfully'})
+
+@app.route('/api/update-password', methods=['POST'])
+def update_password():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'Not logged in'}), 401
+    
+    username = session['username']
+    users = get_users()
+    
+    if username not in users:
+        return jsonify({'status': 'error', 'message': 'User not found'}), 404
+    
+    data = request.get_json()
+    current_password = data.get('current_password')
+    new_password = data.get('new_password')
+    
+    # Verify current password
+    if users[username]['password'] != current_password:
+        return jsonify({'status': 'error', 'message': 'Current password is incorrect'}), 400
+    
+    # Update password
+    users[username]['password'] = new_password
+    
+    # Save updated user data
+    save_users(users)
+    
+    return jsonify({'status': 'success', 'message': 'Password updated successfully'})
 
 
 # Booking API Routes

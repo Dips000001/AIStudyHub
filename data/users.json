@@ -15,6 +15,9 @@
     ],
     "name": "Alex Smith",
     "username": "alex",
+    "email": "alex.smith@richmond.edu",
+    "phone": "+1 (555) 123-4567",
+    "bio": "Passionate reader and lifelong learner. Currently pursuing computer science with a focus on AI and machine learning.",
     "role": "Student",
     "year": "Year2",
     "major": "Bachelor of Computer Science",
@@ -27,7 +30,29 @@
       "CS201",
       "MATH150"
     ],
-    "cohort_position": "Top 15%"
+    "cohort_position": "Top 15%",
+    "member_since": "18 months",
+    "data_used": "2.3GB",
+    "preferences": {
+      "theme": "light",
+      "language": "en",
+      "timezone": "EST",
+      "auto_bookmark": true,
+      "reading_reminders": true,
+      "email_notifications": {
+        "new_books": true,
+        "reminders": true,
+        "updates": false
+      },
+      "push_notifications": {
+        "reminders": true,
+        "events": true
+      },
+      "privacy": {
+        "public_profile": true,
+        "usage_analytics": true
+      }
+    }
   },
   "john": {
     "password": "password123",
@@ -42,6 +67,9 @@
     "reserved_books": [],
     "name": "John Doe",
     "username": "john",
+    "email": "john.doe@richmond.edu",
+    "phone": "+1 (555) 987-6543",
+    "bio": "Computer science student with a passion for software development and machine learning.",
     "role": "Student",
     "year": "Year2",
     "major": "Bachelor of Computer Science",
@@ -54,7 +82,29 @@
       "CS150",
       "ENG101"
     ],
-    "cohort_position": "Top 45%"
+    "cohort_position": "Top 45%",
+    "member_since": "12 months",
+    "data_used": "1.8GB",
+    "preferences": {
+      "theme": "dark",
+      "language": "en",
+      "timezone": "PST",
+      "auto_bookmark": true,
+      "reading_reminders": false,
+      "email_notifications": {
+        "new_books": true,
+        "reminders": false,
+        "updates": true
+      },
+      "push_notifications": {
+        "reminders": false,
+        "events": true
+      },
+      "privacy": {
+        "public_profile": false,
+        "usage_analytics": true
+      }
+    }
   },
   "sarah": {
     "password": "password456",
@@ -86,12 +136,14 @@
   },
   "ety": {
     "password": "qwert",
-    "name": "qwe",
+    "name": "Ethan Young",
     "username": "ety",
-    "email": "qweq@w",
+    "email": "ethan.young@richmond.edu",
+    "phone": "+1 (555) 456-7890",
+    "bio": "Third-year student exploring different academic paths and interests.",
     "role": "Student",
     "year": "Year3",
-    "major": "qwe",
+    "major": "Undecided",
     "favorites": [
       5,
       6
@@ -101,6 +153,28 @@
     "following": 0,
     "avatar": "profile_avatar.png",
     "borrowed_books": [],
-    "reserved_books": []
+    "reserved_books": [],
+    "member_since": "6 months",
+    "data_used": "0.9GB",
+    "preferences": {
+      "theme": "auto",
+      "language": "en",
+      "timezone": "UTC",
+      "auto_bookmark": false,
+      "reading_reminders": true,
+      "email_notifications": {
+        "new_books": false,
+        "reminders": true,
+        "updates": true
+      },
+      "push_notifications": {
+        "reminders": true,
+        "events": false
+      },
+      "privacy": {
+        "public_profile": true,
+        "usage_analytics": false
+      }
+    }
   }
 }
