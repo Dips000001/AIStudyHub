@@ -5,7 +5,7 @@
       "name": "Introduction to 3D Printing",
       "description": "Learn the basics of 3D modeling and printing. Includes hands-on experience.",
       "capacity": 15,
-      "available_spots": 15,
+      "available_spots": 14,
       "type": "3d_printing",
       "availability": "registration_open",
       "features": [
@@ -17,7 +17,12 @@
       "date": "2025-09-15",
       "time": "10:00-16:00",
       "instructor": "Dr. Smith",
-      "registrations": []
+      "registrations": [
+        {
+          "user_id": "alex",
+          "registration_date": "2025-09-08"
+        }
+      ]
     },
     {
       "id": "research-methods",
@@ -90,10 +95,15 @@
         "visualization"
       ],
       "icon": "fas fa-code",
-      "date": "2025-09-28",
-      "time": "10:00-16:00",
+      "date": "2025-09-15",
+      "time": "08:00-12:00",
       "instructor": "Dr. Wilson",
-      "registrations": []
+      "registrations": [
+        {
+          "user_id": "alex",
+          "registration_date": "2025-09-09"
+        }
+      ]
     }
   ]
 }

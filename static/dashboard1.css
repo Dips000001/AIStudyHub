@@ -703,6 +703,18 @@
 .calendar-section .event-time {
     font-size: 0.8rem;
     color: #666;
+    margin-bottom: 0.25rem;
+}
+
+.calendar-section .event-type {
+    font-size: 0.8rem;
+    color: #4285f4;
+    background-color: #e8f0fe;
+    padding: 0.2rem 0.5rem;
+    border-radius: 12px;
+    display: inline-block;
+    text-transform: capitalize;
+    font-weight: 500;
 }
 
 .calendar-section .no-events {

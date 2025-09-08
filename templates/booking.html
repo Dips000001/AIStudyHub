@@ -254,40 +254,53 @@ function openCategoryByName(categoryName) {
 function bookResource(resourceId, resourceType) {
     // Create a modal for booking details
     const bookingForm = `
-        <div id="bookingModal" style="
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0,0,0,0.5); 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 1000;">
-            <div style="
-                background: white; 
-                padding: 20px; 
-                border-radius: 8px; 
-                max-width: 400px; 
-                width: 90%;">
+        <div id="bookingModal" class="booking-modal">
+            <div class="booking-modal-content">
                 <h3>Book Resource</h3>
                 <form id="bookingFormData">
-                    <div style="margin-bottom: 15px;">
-                        <label>Date:</label>
-                        <input type="date" id="bookingDate" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                    <div class="booking-form-group">
+                        <label>Select Date:</label>
+                        <div id="calendarContainer" class="calendar-container">
+                            <div class="calendar-header">
+                                <button type="button" id="prevMonth" class="calendar-nav-btn">&lt;</button>
+                                <span id="currentMonthYear" class="calendar-month-year"></span>
+                                <button type="button" id="nextMonth" class="calendar-nav-btn">&gt;</button>
+                            </div>
+                            <div class="calendar-grid">
+                                <div class="calendar-day-header">Sun</div>
+                                <div class="calendar-day-header">Mon</div>
+                                <div class="calendar-day-header">Tue</div>
+                                <div class="calendar-day-header">Wed</div>
+                                <div class="calendar-day-header">Thu</div>
+                                <div class="calendar-day-header">Fri</div>
+                                <div class="calendar-day-header">Sat</div>
+                                <div id="calendarDays" class="calendar-days"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="bookingDate" required>
+                        <div id="selectedDateDisplay" class="selected-date-display"></div>
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    
+                    ${(resourceType === 'study_room' || resourceType === 'special_room') ? `
+                    <div id="timeSlotsSection" class="booking-form-group time-slots-section" style="display: none;">
+                        <label>Available Time Slots:</label>
+                        <div id="timeSlotGrid" class="time-slot-grid"></div>
+                        <input type="hidden" id="selectedSlot" name="selectedSlot">
+                    </div>
+                    ` : `
+                    <div class="booking-form-group">
                         <label>Start Time:</label>
-                        <input type="time" id="startTime" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                        <input type="time" id="startTime" required class="booking-form-input">
                     </div>
-                    <div style="margin-bottom: 15px;">
+                    <div class="booking-form-group">
                         <label>End Time:</label>
-                        <input type="time" id="endTime" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                        <input type="time" id="endTime" required class="booking-form-input">
                     </div>
-                    <div style="display: flex; gap: 10px;">
-                        <button type="submit" style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px;">Book Now</button>
-                        <button type="button" onclick="closeBookingModal()" style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 4px;">Cancel</button>
+                    `}
+                    
+                    <div class="booking-button-group">
+                        <button type="submit" id="bookButton" class="booking-button primary" disabled>Book Now</button>
+                        <button type="button" onclick="closeBookingModal()" class="booking-button secondary">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -296,19 +309,67 @@ function bookResource(resourceId, resourceType) {
     
     document.body.insertAdjacentHTML('beforeend', bookingForm);
     
-    // Set minimum date to today
+    // Set minimum date to today (via hidden input)
     document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+    
+    // Initialize calendar
+    initializeBookingCalendar(resourceId, resourceType);
+    
+    // For devices, enable book button when all fields are filled
+    if (resourceType !== 'study_room' && resourceType !== 'special_room') {
+        document.getElementById('bookingDate').addEventListener('change', function() {
+            checkDeviceBookingForm();
+        });
+        
+        const startTimeInput = document.getElementById('startTime');
+        const endTimeInput = document.getElementById('endTime');
+        
+        if (startTimeInput && endTimeInput) {
+            startTimeInput.addEventListener('change', checkDeviceBookingForm);
+            endTimeInput.addEventListener('change', checkDeviceBookingForm);
+        }
+    }
+    
+    function checkDeviceBookingForm() {
+        const date = document.getElementById('bookingDate').value;
+        const startTime = document.getElementById('startTime')?.value;
+        const endTime = document.getElementById('endTime')?.value;
+        const bookButton = document.getElementById('bookButton');
+        
+        if (date && startTime && endTime) {
+            bookButton.disabled = false;
+        } else {
+            bookButton.disabled = true;
+        }
+    }
     
     // Handle form submission
     document.getElementById('bookingFormData').addEventListener('submit', function(e) {
         e.preventDefault();
         
+        let startTime, endTime;
+        
+        // Check if using time slots or regular time inputs
+        if (resourceType === 'study_room' || resourceType === 'special_room') {
+            const selectedSlot = document.getElementById('selectedSlot').value;
+            if (!selectedSlot) {
+                alert('Please select a time slot');
+                return;
+            }
+            const slotData = JSON.parse(selectedSlot);
+            startTime = slotData.start;
+            endTime = slotData.end;
+        } else {
+            startTime = document.getElementById('startTime').value;
+            endTime = document.getElementById('endTime').value;
+        }
+        
         const bookingData = {
             resource_id: resourceId,
             resource_type: resourceType,
             date: document.getElementById('bookingDate').value,
-            start_time: document.getElementById('startTime').value,
-            end_time: document.getElementById('endTime').value
+            start_time: startTime,
+            end_time: endTime
         };
         
         fetch('/api/book-resource', {
@@ -340,6 +401,204 @@ function closeBookingModal() {
     if (modal) {
         modal.remove();
     }
+}
+
+function loadTimeSlots(resourceId, resourceType) {
+    const date = document.getElementById('bookingDate').value;
+    const timeSlotsSection = document.getElementById('timeSlotsSection');
+    const timeSlotGrid = document.getElementById('timeSlotGrid');
+    const bookButton = document.getElementById('bookButton');
+    
+    if (!date) {
+        if (timeSlotsSection) timeSlotsSection.style.display = 'none';
+        bookButton.disabled = true;
+        return;
+    }
+    
+    // Only show time slots for study rooms and special rooms
+    if (resourceType !== 'study_room' && resourceType !== 'special_room') {
+        bookButton.disabled = false;
+        return;
+    }
+    
+    fetch('/api/get-available-slots', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            resource_id: resourceId,
+            resource_type: resourceType,
+            date: date
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            timeSlotGrid.innerHTML = '';
+            timeSlotsSection.style.display = 'block';
+            
+            data.slots.forEach(slot => {
+                const slotButton = document.createElement('button');
+                slotButton.type = 'button';
+                slotButton.textContent = slot.label;
+                slotButton.className = `time-slot-button ${slot.available ? 'available' : 'unavailable'}`;
+                
+                if (slot.available) {
+                    slotButton.onclick = () => selectTimeSlot(slot, slotButton);
+                } else {
+                    slotButton.disabled = true;
+                    slotButton.title = 'This time slot is already booked';
+                }
+                
+                timeSlotGrid.appendChild(slotButton);
+            });
+        } else {
+            alert('Error loading time slots: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while loading time slots.');
+    });
+}
+
+function selectTimeSlot(slot, buttonElement) {
+    // Remove selection from other buttons
+    const allButtons = document.querySelectorAll('#timeSlotGrid .time-slot-button');
+    allButtons.forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    
+    // Highlight selected button
+    buttonElement.classList.add('selected');
+    
+    // Store selected slot data
+    document.getElementById('selectedSlot').value = JSON.stringify(slot);
+    
+    // Enable book button
+    document.getElementById('bookButton').disabled = false;
+}
+
+// Calendar functionality for booking modal
+let currentCalendarDate = new Date();
+let selectedBookingDate = null;
+let currentResourceId = null;
+let currentResourceType = null;
+
+function initializeBookingCalendar(resourceId, resourceType) {
+    currentResourceId = resourceId;
+    currentResourceType = resourceType;
+    currentCalendarDate = new Date();
+    
+    // Add initial animation
+    const calendarContainer = document.getElementById('calendarContainer');
+    calendarContainer.style.opacity = '0';
+    calendarContainer.style.transform = 'scale(0.95)';
+    
+    // Set up navigation buttons
+    document.getElementById('prevMonth').onclick = () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+        renderBookingCalendar();
+    };
+    
+    document.getElementById('nextMonth').onclick = () => {
+        currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+        renderBookingCalendar();
+    };
+    
+    renderBookingCalendar();
+    
+    // Animate in
+    setTimeout(() => {
+        calendarContainer.style.transition = 'all 0.3s ease';
+        calendarContainer.style.opacity = '1';
+        calendarContainer.style.transform = 'scale(1)';
+    }, 100);
+}
+
+function renderBookingCalendar() {
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    
+    const currentMonth = currentCalendarDate.getMonth();
+    const currentYear = currentCalendarDate.getFullYear();
+    const today = new Date();
+    
+    // Update month/year display
+    document.getElementById('currentMonthYear').textContent = 
+        `${monthNames[currentMonth]} ${currentYear}`;
+    
+    // Clear previous days
+    const calendarDays = document.getElementById('calendarDays');
+    calendarDays.innerHTML = '';
+    
+    // Get first day of month and number of days
+    const firstDay = new Date(currentYear, currentMonth, 1);
+    const lastDay = new Date(currentYear, currentMonth + 1, 0);
+    const startDate = new Date(firstDay);
+    startDate.setDate(startDate.getDate() - firstDay.getDay());
+    
+    // Generate calendar days (6 weeks)
+    for (let week = 0; week < 6; week++) {
+        for (let day = 0; day < 7; day++) {
+            const date = new Date(startDate);
+            date.setDate(startDate.getDate() + (week * 7) + day);
+            
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day';
+            dayElement.textContent = date.getDate();
+            
+            // Add appropriate classes
+            if (date.getMonth() !== currentMonth) {
+                dayElement.classList.add('other-month');
+            }
+            
+            if (date.toDateString() === today.toDateString()) {
+                dayElement.classList.add('today');
+            }
+            
+            // Disable past dates
+            if (date < today.setHours(0, 0, 0, 0)) {
+                dayElement.classList.add('disabled');
+            } else {
+                dayElement.onclick = () => selectCalendarDate(date);
+            }
+            
+            // Mark selected date
+            if (selectedBookingDate && date.toDateString() === selectedBookingDate.toDateString()) {
+                dayElement.classList.add('selected');
+            }
+            
+            calendarDays.appendChild(dayElement);
+        }
+    }
+}
+
+function selectCalendarDate(date) {
+    selectedBookingDate = new Date(date);
+    
+    // Update hidden input
+    const dateString = date.toISOString().split('T')[0];
+    document.getElementById('bookingDate').value = dateString;
+    
+    // Update selected date display
+    const selectedDisplay = document.getElementById('selectedDateDisplay');
+    selectedDisplay.textContent = `Selected: ${date.toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+    })}`;
+    selectedDisplay.style.display = 'block';
+    
+    // Re-render calendar to show selection
+    renderBookingCalendar();
+    
+    // Load time slots for selected date
+    loadTimeSlots(currentResourceId, currentResourceType);
 }
 
 function viewDetails(resourceId) {

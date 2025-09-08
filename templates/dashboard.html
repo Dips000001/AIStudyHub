@@ -4,7 +4,7 @@
 <!-- Keep Going Banner -->
 <section class="keep-going-banner">
     <div class="banner-content">
-        <h2>Welcome back, Alice</h2>
+        <h2>Welcome back, {{ user_name }}</h2>
         <p>Success is the sum of small efforts repeated day in and day out. You're doing amazing!</p>
     </div>
 </section>
@@ -169,27 +169,36 @@
             <div class="upcoming-events">
                 <h4>Upcoming Events</h4>
                 <div class="event-list">
-                    <div class="event-item">
-                        <div class="event-date">Jan 15</div>
-                        <div class="event-details">
-                            <span class="event-title">Reading Workshop</span>
-                            <span class="event-time">2:00 PM</span>
+                    {% if upcoming_events %}
+                        {% for event in upcoming_events %}
+                        <div class="event-item">
+                            <div class="event-date">{{ event.date_display }}</div>
+                            <div class="event-details">
+                                <span class="event-title">{{ event.title }}</span>
+                                <div class="event-info">
+                                    <div class="event-time-info">
+                                        <i class="fas fa-clock"></i>
+                                        <span>{{ event.time }}{% if event.end_time %} - {{ event.end_time }}{% endif %}</span>
+                                    </div>
+                                    {% if event.location %}
+                                    <div class="event-venue-info">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <span>{{ event.location }}</span>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                                <span class="event-type">{{ event.type }}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="event-item">
-                        <div class="event-date">Jan 18</div>
-                        <div class="event-details">
-                            <span class="event-title">Book Club Meeting</span>
-                            <span class="event-time">7:00 PM</span>
+                        {% endfor %}
+                    {% else %}
+                        <div class="event-item">
+                            <div class="event-details">
+                                <span class="event-title">No upcoming events</span>
+                                <span class="event-time">Register for workshops or make bookings!</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="event-item">
-                        <div class="event-date">Jan 22</div>
-                        <div class="event-details">
-                            <span class="event-title">Midterm: CS111</span>
-                            <span class="event-time">10:00 AM</span>
-                        </div>
-                    </div>
+                    {% endif %}
                 </div>
             </div>
         </section>
@@ -286,5 +295,9 @@
 
 {% endblock %}
 {% block scripts %}
+<script>
+    // Pass user events data from backend to JavaScript
+    window.userEventsData = {{ events_json|safe }};
+</script>
 <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
 {% endblock %}

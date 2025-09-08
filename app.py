@@ -159,7 +159,134 @@ def logout():
 def dashboard():
     if 'username' not in session:
         return redirect(url_for('index'))
-    return render_template('dashboard.html')
+    
+    # Get current user
+    username = session['username']
+    
+    # Load calendar events data
+    workshops = get_workshops()
+    bookings = get_bookings()
+    
+    # Get current date for filtering
+    from datetime import datetime
+    current_date = datetime.now().strftime('%Y-%m-%d')
+    
+    # Prepare upcoming events from workshops and bookings
+    upcoming_events = []
+    
+    # Helper function to format date
+    def format_event_date(date_str):
+        try:
+            date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+            return date_obj.strftime('%b %d')
+        except:
+            return date_str
+    
+    # Add workshops as events (only workshops the user has registered for)
+    for workshop in workshops.get('workshops', []):
+        if 'date' in workshop and 'time' in workshop:
+            # Check if current user is registered for this workshop
+            user_registered = False
+            registrations = workshop.get('registrations', [])
+            for registration in registrations:
+                if registration.get('user_id') == username:
+                    user_registered = True
+                    break
+            
+            # Only include future events that the user is registered for
+            if user_registered and workshop['date'] >= current_date:
+                # Extract time range from workshop time field
+                time_display = workshop['time']
+                if '-' in time_display:
+                    start_time = time_display.split('-')[0]
+                else:
+                    start_time = time_display
+                
+                upcoming_events.append({
+                    'date_display': format_event_date(workshop['date']),
+                    'date_sort': workshop['date'],
+                    'title': workshop['name'],
+                    'time': start_time,
+                    'end_time': time_display.split('-')[1] if '-' in time_display else '',
+                    'location': f"Workshop with {workshop.get('instructor', 'TBA')}",
+                    'type': 'workshop'
+                })
+    
+    # Add user's bookings as events
+    for booking in bookings.get('bookings', []):
+        if booking.get('user_id') == username and booking.get('status') == 'confirmed':
+            if 'date' in booking and 'start_time' in booking:
+                # Only include future events
+                if booking['date'] >= current_date:
+                    # Get resource details for location information
+                    resource_type = booking.get('resource_type', 'resource')
+                    resource_id = booking.get('resource_id', '')
+                    location = 'TBA'
+                    title = f"Booking: {resource_id}"
+                    
+                    # Look up location from resource data
+                    if resource_type == 'study_room':
+                        study_rooms = get_study_rooms()
+                        for room in study_rooms.get('study_rooms', []):
+                            if room.get('id') == resource_id:
+                                location = room.get('name', resource_id)
+                                title = f"Study Room: {room.get('name', resource_id)}"
+                                break
+                    elif resource_type == 'special_room':
+                        special_rooms = get_special_rooms()
+                        for room in special_rooms.get('special_rooms', []):
+                            if room.get('id') == resource_id:
+                                location = room.get('name', resource_id)
+                                title = f"Special Room: {room.get('name', resource_id)}"
+                                break
+                    elif resource_type == 'device':
+                        devices = get_devices()
+                        for device in devices.get('devices', []):
+                            if device.get('id') == resource_id:
+                                location = f"Device: {device.get('name', resource_id)}"
+                                title = f"Device: {device.get('name', resource_id)}"
+                                break
+                    
+                    # Format time range
+                    start_time = booking['start_time']
+                    end_time = booking.get('end_time', '')
+                    
+                    upcoming_events.append({
+                        'date_display': format_event_date(booking['date']),
+                        'date_sort': booking['date'],
+                        'title': title,
+                        'time': start_time,
+                        'end_time': end_time,
+                        'location': location,
+                        'type': 'booking'
+                    })
+    
+    # Sort events by date first, then by time
+    def event_sort_key(event):
+        # Convert time to comparable format (24-hour format)
+        time_str = event.get('time', '00:00')
+        # Handle time format like "10:00" or "10:00-12:00"
+        if '-' in time_str:
+            time_str = time_str.split('-')[0]
+        
+        # Ensure time is in HH:MM format
+        if ':' not in time_str:
+            time_str = '00:00'
+        
+        return (event['date_sort'], time_str)
+    
+    upcoming_events.sort(key=event_sort_key)
+    
+    # Get current user data
+    users = get_users()
+    current_user = users.get(username, {})
+    user_name = current_user.get('name', username)
+    
+    # Convert events to JSON for JavaScript
+    import json
+    events_json = json.dumps(upcoming_events)
+    
+    return render_template('dashboard.html', upcoming_events=upcoming_events, user_name=user_name, events_json=events_json)
 
 @app.route('/booking')
 def booking():
@@ -1246,6 +1373,66 @@ def book_resource():
     save_bookings(bookings_data)
     
     return jsonify({'success': True, 'message': 'Resource booked successfully', 'booking': new_booking})
+
+@app.route('/api/get-available-slots', methods=['POST'])
+def get_available_slots():
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    data = request.get_json()
+    resource_id = data.get('resource_id')
+    resource_type = data.get('resource_type')
+    booking_date = data.get('date')
+    
+    # Define available time slots (09:00 to 18:00 in hourly slots)
+    time_slots = [
+        {'start': '09:00', 'end': '10:00', 'label': '09:00 - 10:00'},
+        {'start': '10:00', 'end': '11:00', 'label': '10:00 - 11:00'},
+        {'start': '11:00', 'end': '12:00', 'label': '11:00 - 12:00'},
+        {'start': '12:00', 'end': '13:00', 'label': '12:00 - 13:00'},
+        {'start': '13:00', 'end': '14:00', 'label': '13:00 - 14:00'},
+        {'start': '14:00', 'end': '15:00', 'label': '14:00 - 15:00'},
+        {'start': '15:00', 'end': '16:00', 'label': '15:00 - 16:00'},
+        {'start': '16:00', 'end': '17:00', 'label': '16:00 - 17:00'},
+        {'start': '17:00', 'end': '18:00', 'label': '17:00 - 18:00'}
+    ]
+    
+    # Only apply time slots to study rooms and special rooms
+    if resource_type not in ['study_room', 'special_room']:
+        return jsonify({'success': False, 'message': 'Time slots only apply to study rooms and special rooms'})
+    
+    # Load existing bookings
+    bookings_data = get_bookings()
+    existing_bookings = bookings_data.get('bookings', [])
+    
+    # Check which slots are available
+    available_slots = []
+    for slot in time_slots:
+        is_available = True
+        
+        # Check if this slot conflicts with existing bookings
+        for booking in existing_bookings:
+            if (booking.get('resource_id') == resource_id and 
+                booking.get('date') == booking_date and 
+                booking.get('status') == 'confirmed'):
+                
+                booking_start = booking.get('start_time')
+                booking_end = booking.get('end_time')
+                
+                # Check for time overlap
+                if (slot['start'] < booking_end and slot['end'] > booking_start):
+                    is_available = False
+                    break
+        
+        slot_info = {
+            'start': slot['start'],
+            'end': slot['end'],
+            'label': slot['label'],
+            'available': is_available
+        }
+        available_slots.append(slot_info)
+    
+    return jsonify({'success': True, 'slots': available_slots})
 
 @app.route('/api/register-workshop', methods=['POST'])
 def register_workshop():

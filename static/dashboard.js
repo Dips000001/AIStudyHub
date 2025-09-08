@@ -2,84 +2,27 @@
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
-// Sample user registered events data
-const userEvents = [
-    {
-        id: 1,
-        title: "3D Printer Workshop",
-        date: "2025-09-10",
-        startTime: "2:00 PM",
-        endTime: "4:00 PM",
-        venue: "Yeung B7510",
-        type: "workshop"
-    },
-    {
-        id: 2,
-        title: "Advanced Programming Workshop",
-        date: "2025-09-15",
-        startTime: "10:00 AM",
-        endTime: "12:00 PM",
-        venue: "Computer Lab A301",
-        type: "workshop"
-    },
-    {
-        id: 3,
-        title: "Research Methodology Seminar",
-        date: "2025-09-22",
-        startTime: "3:00 PM",
-        endTime: "5:00 PM",
-        venue: "Main Auditorium",
-        type: "seminar"
-    },
-    {
-        id: 4,
-        title: "Library Orientation Session",
-        date: "2025-09-28",
-        startTime: "1:00 PM",
-        endTime: "2:30 PM",
-        venue: "Stanley Ho Library",
-        type: "orientation"
-    },
-    {
-        id: 5,
-        title: "Book Club Meeting",
-        date: "2025-09-12",
-        startTime: "7:00 PM",
-        endTime: "8:30 PM",
-        venue: "Student Center Room 201",
-        type: "club"
-    },
-    {
-        id: 6,
-        title: "Statistics Study Group",
-        date: "2025-09-18",
-        startTime: "4:00 PM",
-        endTime: "6:00 PM",
-        venue: "Library Study Room 3",
-        type: "study"
-    },
-    {
-        id: 7,
-        title: "Career Fair",
-        date: "2025-09-25",
-        startTime: "9:00 AM",
-        endTime: "4:00 PM",
-        venue: "University Sports Hall",
-        type: "career"
-    },
-    {
-        id: 8,
-        title: "Python Coding Bootcamp",
-        date: "2025-10-02",
-        startTime: "1:00 PM",
-        endTime: "5:00 PM",
-        venue: "Computer Lab B205",
-        type: "workshop"
+// Get user events from backend data (passed from template)
+let userEvents = [];
+
+// Initialize user events from backend data
+function initializeUserEvents() {
+    if (window.userEventsData) {
+        userEvents = window.userEventsData.map(event => ({
+            id: event.title + '_' + event.date_sort, // Create unique ID
+            title: event.title,
+            date: event.date_sort,
+            startTime: event.time,
+            endTime: event.end_time || '', // Use end_time from backend
+            venue: event.location || '', // Use location from backend
+            type: event.type
+        }));
     }
-];
+}
 
 // Calendar functionality
 function initializeCalendar() {
+    initializeUserEvents(); // Initialize events from backend data first
     generateCalendar(currentMonth, currentYear);
     generateUpcomingEvents();
 }
@@ -163,7 +106,23 @@ function generateUpcomingEvents() {
     const upcomingEvents = userEvents.filter(event => {
         const eventDate = new Date(event.date);
         return eventDate >= today && eventDate <= fifteenDaysFromNow;
-    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+    }).sort((a, b) => {
+        // Sort by date first, then by time
+        const dateComparison = new Date(a.date) - new Date(b.date);
+        if (dateComparison !== 0) {
+            return dateComparison;
+        }
+        
+        // If dates are the same, sort by time
+        const timeA = a.startTime || '00:00';
+        const timeB = b.startTime || '00:00';
+        
+        // Handle time ranges (e.g., "10:00-12:00" becomes "10:00")
+        const startTimeA = timeA.includes('-') ? timeA.split('-')[0] : timeA;
+        const startTimeB = timeB.includes('-') ? timeB.split('-')[0] : timeB;
+        
+        return startTimeA.localeCompare(startTimeB);
+    });
     
     // Update the upcoming events display
     const eventList = document.querySelector('.event-list');
