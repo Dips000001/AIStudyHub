@@ -1,84 +1,362 @@
 {% extends "layout.html" %}
 {% block title %}Booking{% endblock %}
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='booking.css') }}">
+{% endblock %}
 {% block content %}
-<h1>Comprehensive Booking System</h1>
-<p>A unified system for borrowing physical books, e-books, academic resources, and workshops.</p>
-
-<!-- Search and Filter Section -->
-<div class="search-filter-section">
-    <input type="text" placeholder="Search for resources..." class="search-input">
-    <select class="filter-select">
-        <option value="all">All Categories</option>
-        <option value="books">Physical Books</option>
-        <option value="ebooks">E-books</option>
-        <option value="papers">Past Papers</option>
-        <option value="workshops">Workshops</option>
-    </select>
-    <button class="search-button">Search</button>
-</div>
-
-<!-- Tabbed Layout for Booking Categories -->
-<div class="tab-layout">
-    <div class="tab-header">
-        <button class="tab-link active" onclick="openCategory('books')">Physical Books</button>
-        <button class="tab-link" onclick="openCategory('ebooks')">E-books</button>
-        <button class="tab-link" onclick="openCategory('resources')">Academic Resources</button>
-        <button class="tab-link" onclick="openCategory('workshops')">Workshops</button>
+<div class="booking-container">
+    <div class="booking-header">
+        <h1>Comprehensive Booking System</h1>
+        <p>Book study rooms, special facilities, devices, and register for workshops</p>
     </div>
 
-    <!-- Physical Books Category -->
-    <div id="books" class="tab-content active">
-        <h2>Physical Books</h2>
-        <p>Option for a "trial read" to encourage physical borrowing.</p>
-        <div class="resource-list">
-            <!-- Book Item -->
-            <div class="resource-item">
-                <h3>Book Title 1</h3>
-                <p>Author Name</p>
-                <button class="borrow-button">Borrow</button>
-                <button class="trial-button">Trial Read</button>
+    <!-- Search and Filter Section -->
+    <div class="search-filter-section">
+        <input type="text" id="searchInput" placeholder="Search for resources..." class="search-input">
+        <select class="filter-select" id="filterSelect">
+            <option value="all">All Categories</option>
+            <option value="study-rooms">Study Rooms</option>
+            <option value="special-rooms">Special Rooms</option>
+            <option value="devices">Devices</option>
+            <option value="workshops">Workshops</option>
+        </select>
+        <button class="search-button" onclick="searchResources()">Search</button>
+    </div>
+
+    <!-- Tabbed Layout for Booking Categories -->
+    <div class="tab-layout">
+        <div class="tab-header">
+            <button class="tab-link active" onclick="openCategory('study-rooms')">Study Rooms</button>
+            <button class="tab-link" onclick="openCategory('special-rooms')">Special Rooms</button>
+            <button class="tab-link" onclick="openCategory('devices')">Devices</button>
+            <button class="tab-link" onclick="openCategory('workshops')">Workshops</button>
+        </div>
+
+        <!-- Study Rooms Category -->
+        <div id="study-rooms" class="tab-content active study-rooms">
+            <h2>Study Rooms</h2>
+            <p>Book individual and group study rooms for focused learning sessions.</p>
+            <div class="resource-grid">
+                <!-- Individual Study Room -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-user" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Individual Study Room
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Individual Study Room A1</h3>
+                        <p class="resource-description">Quiet space perfect for individual study with desk, chair, and power outlets.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 1 person</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('study-room-a1')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('study-room-a1')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group Study Room -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Group Study Room
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Group Study Room B1</h3>
+                        <p class="resource-description">Collaborative space with whiteboard, projector, and seating for up to 8 people.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 8 people</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('study-room-b1')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('study-room-b1')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Silent Study Room -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-volume-mute" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Silent Study Room
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Silent Study Room C1</h3>
+                        <p class="resource-description">Ultra-quiet environment for deep focus and concentration.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 4 people</span>
+                            <span class="availability unavailable">Occupied</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-secondary" disabled>Currently Occupied</button>
+                            <button class="btn btn-info" onclick="joinWaitlist('study-room-c1')">Join Waitlist</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- E-books Category -->
-    <div id="ebooks" class="tab-content">
-        <h2>E-books</h2>
-        <p>Direct integration for seamless online reading.</p>
-        <div class="resource-list">
-            <!-- E-book Item -->
-            <div class="resource-item">
-                <h3>E-book Title 1</h3>
-                <p>Author Name</p>
-                <button class="read-online-button">Read Online</button>
+        <!-- Special Rooms Category -->
+        <div id="special-rooms" class="tab-content special-rooms">
+            <h2>Special Rooms</h2>
+            <p>Book specialized facilities for presentations, meetings, and collaborative work.</p>
+            <div class="resource-grid">
+                <!-- Conference Room -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-handshake" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Conference Room
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Conference Room Alpha</h3>
+                        <p class="resource-description">Professional meeting space with video conferencing, large display, and seating for 12.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 12 people</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('conference-alpha')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('conference-alpha')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Presentation Hall -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-chalkboard-teacher" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Presentation Hall
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Main Presentation Hall</h3>
+                        <p class="resource-description">Large auditorium-style space perfect for presentations and seminars.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 50 people</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('presentation-hall')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('presentation-hall')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workstation -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-desktop" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Workstation
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Computer Workstation Lab</h3>
+                        <p class="resource-description">High-performance computers with specialized software for research and development.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 20 workstations</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('workstation-lab')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('workstation-lab')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Studio -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-video" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Media Studio
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Media Production Studio</h3>
+                        <p class="resource-description">Professional studio with lighting, cameras, and audio equipment for content creation.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Capacity: 6 people</span>
+                            <span class="availability unavailable">In Use</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-secondary" disabled>Currently In Use</button>
+                            <button class="btn btn-info" onclick="joinWaitlist('media-studio')">Join Waitlist</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Academic Resources Category -->
-    <div id="resources" class="tab-content">
-        <h2>Past Papers and Academic Resources</h2>
-        <p>Easy access to essential study materials.</p>
-        <div class="resource-list">
-            <!-- Resource Item -->
-            <div class="resource-item">
-                <h3>Past Paper - Course 101</h3>
-                <p>Year: 2023</p>
-                <button class="download-button">Download</button>
+        <!-- Devices Category -->
+        <div id="devices" class="tab-content devices">
+            <h2>Devices</h2>
+            <p>Borrow specialized equipment and devices for your projects and presentations.</p>
+            <div class="resource-grid">
+                <!-- 3D Printer -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-cube" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        3D Printer
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">3D Printer - Ultimaker S3</h3>
+                        <p class="resource-description">High-quality 3D printer for prototyping and creative projects.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Max print time: 24 hours</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('3d-printer-s3')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('3d-printer-s3')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projector -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-video" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Projector
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Portable Projector - Epson</h3>
+                        <p class="resource-description">High-resolution portable projector perfect for presentations and events.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Loan period: 7 days</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('projector-epson')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('projector-epson')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Microphone -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-microphone" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Microphone
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Wireless Microphone Set</h3>
+                        <p class="resource-description">Professional wireless microphone system for presentations and recordings.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Loan period: 3 days</span>
+                            <span class="availability unavailable">On Loan</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-secondary" disabled>Currently On Loan</button>
+                            <button class="btn btn-info" onclick="joinWaitlist('microphone-wireless')">Join Waitlist</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video Recorder -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Video Recorder
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">4K Video Camera</h3>
+                        <p class="resource-description">Professional 4K video camera with stabilization and multiple lenses.</p>
+                        <div class="resource-details">
+                            <span class="capacity">Loan period: 5 days</span>
+                            <span class="availability">Available</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-primary" onclick="bookResource('video-camera-4k')">Book Now</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('video-camera-4k')">View Details</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Workshops Category -->
-    <div id="workshops" class="tab-content">
-        <h2>Workshops</h2>
-        <p>Book a 3D printer, laser cutter, etc.</p>
-        <div class="resource-list">
-            <!-- Workshop Item -->
-            <div class="resource-item">
-                <h3>3D Printer Booking</h3>
-                <p>Availability: 3 slots remaining</p>
-                <button class="book-slot-button">Book a Slot</button>
+        <!-- Workshops Category -->
+        <div id="workshops" class="tab-content workshops">
+            <h2>Workshop Registration</h2>
+            <p>Register for educational workshops and training sessions to enhance your skills.</p>
+            <div class="resource-grid">
+                <!-- 3D Printing Workshop -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-graduation-cap" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        3D Printing Workshop
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Introduction to 3D Printing</h3>
+                        <p class="resource-description">Learn the basics of 3D modeling and printing. Includes hands-on experience.</p>
+                        <div class="resource-details">
+                            <span class="capacity">15 spots available</span>
+                            <span class="availability">Registration Open</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-success" onclick="registerWorkshop('3d-printing-intro')">Register</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('3d-printing-intro')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Research Methods Workshop -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Research Methods
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Advanced Research Methods</h3>
+                        <p class="resource-description">Master research methodologies and data analysis techniques for academic success.</p>
+                        <div class="resource-details">
+                            <span class="capacity">20 spots available</span>
+                            <span class="availability">Registration Open</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-success" onclick="registerWorkshop('research-methods')">Register</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('research-methods')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Media Workshop -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-film" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Digital Media
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Digital Media Production</h3>
+                        <p class="resource-description">Create professional videos and multimedia content using industry-standard tools.</p>
+                        <div class="resource-details">
+                            <span class="capacity">12 spots available</span>
+                            <span class="availability unavailable">Registration Closed</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-secondary" disabled>Registration Closed</button>
+                            <button class="btn btn-warning" onclick="joinWaitlist('digital-media')">Join Waitlist</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Programming Workshop -->
+                <div class="resource-card">
+                    <div class="resource-placeholder">
+                        <i class="fas fa-code" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        Programming
+                    </div>
+                    <div class="resource-info">
+                        <h3 class="resource-title">Python for Data Science</h3>
+                        <p class="resource-description">Learn Python programming with focus on data analysis and visualization.</p>
+                        <div class="resource-details">
+                            <span class="capacity">25 spots available</span>
+                            <span class="availability">Registration Open</span>
+                        </div>
+                        <div class="resource-actions">
+                            <button class="btn btn-success" onclick="registerWorkshop('python-data-science')">Register</button>
+                            <button class="btn btn-secondary" onclick="viewDetails('python-data-science')">View Details</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -87,18 +365,106 @@
 {% block scripts %}
 <script>
 function openCategory(categoryName) {
-    var i;
-    var x = document.getElementsByClassName("tab-content");
-    for (i = 0; i < x.length; i++) {
-        x[i].style.display = "none";
+    // Hide all tab contents
+    var tabContents = document.getElementsByClassName("tab-content");
+    for (var i = 0; i < tabContents.length; i++) {
+        tabContents[i].classList.remove("active");
     }
-    document.getElementById(categoryName).style.display = "block";
-
-    var tablinks = document.getElementsByClassName("tab-link");
-    for (i = 0; i < x.length; i++) {
-        tablinks[i].className = tablinks[i].className.replace(" active", "");
+    
+    // Remove active class from all tab links
+    var tabLinks = document.getElementsByClassName("tab-link");
+    for (var i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].classList.remove("active");
     }
-    event.currentTarget.className += " active";
+    
+    // Show selected tab content and mark tab as active
+    document.getElementById(categoryName).classList.add("active");
+    event.currentTarget.classList.add("active");
 }
+
+function searchResources() {
+    var searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    var filterValue = document.getElementById('filterSelect').value;
+    var cards = document.getElementsByClassName('resource-card');
+    
+    for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var title = card.querySelector('.resource-title').textContent.toLowerCase();
+        var description = card.querySelector('.resource-description').textContent.toLowerCase();
+        var parentTab = card.closest('.tab-content').id;
+        
+        var matchesSearch = title.includes(searchTerm) || description.includes(searchTerm);
+        var matchesFilter = filterValue === 'all' || parentTab === filterValue;
+        
+        if (matchesSearch && matchesFilter) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    }
+    
+    // If filtering by category, switch to that tab
+    if (filterValue !== 'all') {
+        openCategoryByName(filterValue);
+    }
+}
+
+function openCategoryByName(categoryName) {
+    // Hide all tab contents
+    var tabContents = document.getElementsByClassName("tab-content");
+    for (var i = 0; i < tabContents.length; i++) {
+        tabContents[i].classList.remove("active");
+    }
+    
+    // Remove active class from all tab links
+    var tabLinks = document.getElementsByClassName("tab-link");
+    for (var i = 0; i < tabLinks.length; i++) {
+        tabLinks[i].classList.remove("active");
+    }
+    
+    // Show selected tab content and mark corresponding tab as active
+    document.getElementById(categoryName).classList.add("active");
+    
+    // Find and activate the corresponding tab link
+    var tabButtons = document.querySelectorAll('.tab-link');
+    tabButtons.forEach(function(button) {
+        if (button.getAttribute('onclick').includes(categoryName)) {
+            button.classList.add('active');
+        }
+    });
+}
+
+function bookResource(resourceId) {
+    alert('Booking ' + resourceId + '...\
+This would open a booking form with date/time selection.');
+    // Here you would typically open a modal or redirect to a booking form
+}
+
+function viewDetails(resourceId) {
+    alert('Viewing details for ' + resourceId + '...\
+This would show detailed information about the resource.');
+    // Here you would typically show a modal with detailed information
+}
+
+function registerWorkshop(workshopId) {
+    alert('Registering for ' + workshopId + '...\
+This would open a registration form.');
+    // Here you would typically open a registration form
+}
+
+function joinWaitlist(resourceId) {
+    alert('Joining waitlist for ' + resourceId + '...\
+You will be notified when it becomes available.');
+    // Here you would typically add the user to a waitlist
+}
+
+// Initialize search functionality
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('searchInput').addEventListener('keyup', function(event) {
+        if (event.key === 'Enter') {
+            searchResources();
+        }
+    });
+});
 </script>
 {% endblock %}
