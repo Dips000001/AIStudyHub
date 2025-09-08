@@ -7,6 +7,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='dashboard1.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='chatbox.css') }}">
     {% block styles %}{% endblock %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
@@ -100,6 +101,7 @@
             }
         }
     </script>
+    <script src="{{ url_for('static', filename='chatbox.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>]]>
