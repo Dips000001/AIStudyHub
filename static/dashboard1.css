@@ -606,6 +606,25 @@
 .calendar-section .calendar-day.has-event {
     background-color: #fff3e0;
     color: #f57c00;
+    font-weight: 600;
+    position: relative;
+}
+
+.calendar-section .calendar-day.has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    background-color: #f57c00;
+    border-radius: 50%;
+}
+
+.calendar-section .calendar-day.has-event:hover {
+    background-color: #ffe0b2;
+    transform: scale(1.05);
 }
 
 .calendar-section .upcoming-events h4 {
@@ -623,9 +642,10 @@
 .calendar-section .event-item {
     display: flex;
     gap: 1rem;
-    padding: 0.75rem;
+    padding: 1rem;
     background-color: #f8f9fa;
     border-radius: 8px;
+    border: 1px solid #e9ecef;
 }
 
 .calendar-section .event-date {
@@ -633,22 +653,66 @@
     color: #4285f4;
     min-width: 50px;
     font-size: 0.9rem;
+    text-align: center;
 }
 
 .calendar-section .event-details {
     display: flex;
     flex-direction: column;
+    flex: 1;
 }
 
 .calendar-section .event-title {
-    font-weight: 500;
+    font-weight: 600;
     color: #333;
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.calendar-section .event-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.calendar-section .event-time-info,
+.calendar-section .event-venue-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.calendar-section .event-time-info i,
+.calendar-section .event-venue-info i {
+    width: 14px;
+    color: #4285f4;
+    font-size: 0.8rem;
+}
+
+.calendar-section .event-time-info span {
+    font-weight: 500;
+}
+
+.calendar-section .event-venue-info span {
+    color: #555;
     font-size: 0.9rem;
 }
 
 .calendar-section .event-time {
     font-size: 0.8rem;
     color: #666;
+}
+
+.calendar-section .no-events {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px dashed #ddd;
 }
 
 /* Responsive Design */
@@ -720,5 +784,281 @@
 
     .books-read .big-number {
         font-size: 3rem;
+    }
+}
+
+/* Book Details Modal */
+.book-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+.book-modal-content {
+    background-color: white;
+    margin: 2% auto;
+    padding: 0;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.book-modal-close {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+    z-index: 1001;
+    background: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.book-modal-close:hover {
+    color: #333;
+}
+
+.book-modal-header {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.book-modal-cover img {
+    width: 120px;
+    height: 150px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.book-modal-info {
+    flex: 1;
+}
+
+.book-modal-info h2 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.book-modal-author {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.book-modal-progress {
+    margin-bottom: 1rem;
+}
+
+.book-modal-progress .progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.book-modal-progress .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4285f4, #34a853);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.book-modal-progress .progress-text {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.book-modal-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.book-modal-body {
+    padding: 2rem;
+}
+
+.book-details-section,
+.reading-progress-section,
+.book-summary-section {
+    margin-bottom: 2rem;
+}
+
+.book-details-section h3,
+.reading-progress-section h3,
+.book-summary-section h3 {
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: #333;
+}
+
+.detail-value {
+    color: #666;
+    text-align: right;
+}
+
+.progress-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 600;
+    color: #4285f4;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.last-read {
+    color: #666;
+    font-style: italic;
+    margin: 0;
+}
+
+.book-summary-section p {
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.book-modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.btn-secondary,
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary {
+    background: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.btn-secondary:hover {
+    background: #e9ecef;
+}
+
+.btn-primary {
+    background: #4285f4;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3367d6;
+}
+
+/* Responsive Design for Modal */
+@media (max-width: 768px) {
+    .book-modal-content {
+        width: 95%;
+        margin: 5% auto;
+    }
+    
+    .book-modal-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem;
+    }
+    
+    .book-modal-cover {
+        align-self: center;
+    }
+    
+    .progress-stats {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .book-modal-footer {
+        flex-direction: column;
+    }
+    
+    .btn-secondary,
+    .btn-primary {
+        width: 100%;
     }
 }
