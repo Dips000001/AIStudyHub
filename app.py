@@ -857,8 +857,52 @@ def profile():
         
     username = session['username']
     users = get_users()
+    library_books = get_library_books()
+    bookings_data = get_bookings()
+    devices_data = get_devices()
+    workshops_data = get_workshops()
+    study_rooms_data = get_study_rooms()
+    
+    # Calculate resource allocation
+    user_bookings = [b for b in bookings_data.get('bookings', []) if b.get('user_id') == username]
+    
+    # Study room usage (percentage based on number of bookings)
+    study_room_bookings = [b for b in user_bookings if b.get('resource_type') == 'study_room']
+    study_room_percentage = min(len(study_room_bookings) * 15, 100)  # 15% per booking, max 100%
+    
+    # Device lending (percentage based on active loans)
+    device_bookings = [b for b in user_bookings if b.get('resource_type') == 'device']
+    device_percentage = min(len(device_bookings) * 25, 100)  # 25% per device, max 100%
+    
+    # Workshop bookings (percentage based on registered workshops)
+    workshop_registrations = []
+    for workshop in workshops_data.get('workshops', []):
+        for reg in workshop.get('registrations', []):
+            if reg.get('user_id') == username:
+                workshop_registrations.append(workshop)
+    workshop_percentage = min(len(workshop_registrations) * 20, 100)  # 20% per workshop, max 100%
+    
+    # Printing quota (simulated based on borrowed books)
+    borrowed_books_count = len(users.get(username, {}).get('borrowed_books', []))
+    printing_percentage = min(borrowed_books_count * 20 + 35, 100)  # Base 35% + 20% per book
+    
+    resource_allocation = {
+        'printing': printing_percentage,
+        'studyroom': study_room_percentage, 
+        'devices': device_percentage,
+        'workshops': workshop_percentage
+    }
     
     if username in users:
+        # Get borrowed books details
+        borrowed_book_ids = users[username].get('borrowed_books', [])
+        borrowed_books_details = []
+        for book_id in borrowed_book_ids:
+            for book in library_books:
+                if book['id'] == book_id:
+                    borrowed_books_details.append(book)
+                    break
+        
         user_data = {
             'name': users[username].get('name', username),
             'username': username,
@@ -867,7 +911,18 @@ def profile():
             'major': users[username].get('major', ''),
             'followers': users[username].get('followers', 0),
             'following': users[username].get('following', 0),
-            'avatar': users[username].get('avatar', 'profile_avatar.png')
+            'avatar': users[username].get('avatar', 'profile_avatar.png'),
+            'email': users[username].get('email', ''),
+            'borrowed_books': users[username].get('borrowed_books', []),
+            'borrowed_books_details': borrowed_books_details,
+            'reserved_books': users[username].get('reserved_books', []),
+            'favorites': users[username].get('favorites', []),
+            'gpa': users[username].get('gpa', 0.0),
+            'registered_courses': users[username].get('registered_courses', []),
+            'cohort_position': users[username].get('cohort_position', ''),
+            'resource_allocation': resource_allocation,
+            'user_bookings': user_bookings,
+            'workshop_registrations': workshop_registrations
         }
     else:
         user_data = {
@@ -878,7 +933,18 @@ def profile():
             'major': '',
             'followers': 0,
             'following': 0,
-            'avatar': 'profile_avatar.png'
+            'avatar': 'profile_avatar.png',
+            'email': '',
+            'borrowed_books': [],
+            'borrowed_books_details': [],
+            'reserved_books': [],
+            'favorites': [],
+            'gpa': 0.0,
+            'registered_courses': [],
+            'cohort_position': '',
+            'resource_allocation': {'printing': 35, 'studyroom': 0, 'devices': 0, 'workshops': 0},
+            'user_bookings': [],
+            'workshop_registrations': []
         }
         
     return render_template('profile.html', user=user_data)

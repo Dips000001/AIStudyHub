@@ -102,6 +102,7 @@
     justify-content: center;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
+    text-decoration: none;
 }
 
 .edit-profile-btn:hover {
@@ -264,7 +265,24 @@
     color: #666;
 }
 
-.total-books, .reading-streak {
+.cohort-info {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #4285f4;
+    font-weight: 500;
+}
+
+.cohort-position {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.cohort-position::before {
+    content: "🎓";
+}
+
+.total-books, .reading-streak, .total-bookings {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -272,6 +290,10 @@
 
 .total-books::before {
     content: "📚";
+}
+
+.total-bookings::before {
+    content: "📅";
 }
 
 .reading-streak::before {
@@ -626,6 +648,18 @@
     flex-direction: column;
     gap: 1rem;
     max-width: 800px;
+}
+
+.no-loans {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
+}
+
+.no-loans p {
+    margin: 0;
+    font-size: 1rem;
 }
 
 .loan-item-block {
