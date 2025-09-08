@@ -82,5 +82,24 @@
       "MATH200"
     ],
     "cohort_position": "Top 5%"
+  },
+  "ety": {
+    "password": "qwert",
+    "name": "qwe",
+    "username": "ety",
+    "email": "qweq@w",
+    "role": "Student",
+    "year": "Year3",
+    "major": "qwe",
+    "favorites": [
+      5,
+      6
+    ],
+    "my_bookshelf": [],
+    "followers": 0,
+    "following": 0,
+    "avatar": "profile_avatar.png",
+    "borrowed_books": [],
+    "reserved_books": []
   }
 }

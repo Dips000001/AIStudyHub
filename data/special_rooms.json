@@ -1,0 +1,56 @@
+{
+  "special_rooms": [
+    {
+      "id": "conference-alpha",
+      "name": "Conference Room Alpha",
+      "description": "Professional meeting space with video conferencing, large display, and seating for 12.",
+      "capacity": 12,
+      "type": "conference",
+      "availability": "available",
+      "features": ["video_conferencing", "large_display", "professional"],
+      "icon": "fas fa-handshake",
+      "bookings": []
+    },
+    {
+      "id": "presentation-hall",
+      "name": "Main Presentation Hall",
+      "description": "Large auditorium-style space perfect for presentations and seminars.",
+      "capacity": 50,
+      "type": "presentation",
+      "availability": "available",
+      "features": ["auditorium", "large_capacity", "presentations"],
+      "icon": "fas fa-chalkboard-teacher",
+      "bookings": []
+    },
+    {
+      "id": "workstation-lab",
+      "name": "Computer Workstation Lab",
+      "description": "High-performance computers with specialized software for research and development.",
+      "capacity": 20,
+      "type": "workstation",
+      "availability": "available",
+      "features": ["high_performance", "specialized_software", "research"],
+      "icon": "fas fa-desktop",
+      "bookings": []
+    },
+    {
+      "id": "media-studio",
+      "name": "Media Production Studio",
+      "description": "Professional studio with lighting, cameras, and audio equipment for content creation.",
+      "capacity": 6,
+      "type": "studio",
+      "availability": "in_use",
+      "features": ["lighting", "cameras", "audio_equipment", "content_creation"],
+      "icon": "fas fa-video",
+      "bookings": [
+        {
+          "user_id": "user456",
+          "date": "2025-09-08",
+          "start_time": "14:00",
+          "end_time": "18:00",
+          "status": "active"
+        }
+      ]
+    }
+  ]
+}

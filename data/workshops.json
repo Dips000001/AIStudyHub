@@ -1,0 +1,99 @@
+{
+  "workshops": [
+    {
+      "id": "3d-printing-intro",
+      "name": "Introduction to 3D Printing",
+      "description": "Learn the basics of 3D modeling and printing. Includes hands-on experience.",
+      "capacity": 15,
+      "available_spots": 15,
+      "type": "3d_printing",
+      "availability": "registration_open",
+      "features": [
+        "hands_on",
+        "3d_modeling",
+        "basics"
+      ],
+      "icon": "fas fa-graduation-cap",
+      "date": "2025-09-15",
+      "time": "10:00-16:00",
+      "instructor": "Dr. Smith",
+      "registrations": []
+    },
+    {
+      "id": "research-methods",
+      "name": "Advanced Research Methods",
+      "description": "Master research methodologies and data analysis techniques for academic success.",
+      "capacity": 20,
+      "available_spots": 19,
+      "type": "research",
+      "availability": "registration_open",
+      "features": [
+        "methodologies",
+        "data_analysis",
+        "academic"
+      ],
+      "icon": "fas fa-search",
+      "date": "2025-09-22",
+      "time": "09:00-17:00",
+      "instructor": "Prof. Johnson",
+      "registrations": [
+        {
+          "user_id": "ety",
+          "registration_date": "2025-09-08"
+        }
+      ]
+    },
+    {
+      "id": "digital-media",
+      "name": "Digital Media Production",
+      "description": "Create professional videos and multimedia content using industry-standard tools.",
+      "capacity": 12,
+      "available_spots": 0,
+      "type": "media",
+      "availability": "registration_closed",
+      "features": [
+        "professional",
+        "multimedia",
+        "industry_standard"
+      ],
+      "icon": "fas fa-film",
+      "date": "2025-09-12",
+      "time": "13:00-18:00",
+      "instructor": "Ms. Davis",
+      "registrations": [
+        {
+          "user_id": "user101",
+          "registration_date": "2025-09-01"
+        },
+        {
+          "user_id": "user102",
+          "registration_date": "2025-09-01"
+        },
+        {
+          "user_id": "user103",
+          "registration_date": "2025-09-02"
+        }
+      ],
+      "waitlist": []
+    },
+    {
+      "id": "python-data-science",
+      "name": "Python for Data Science",
+      "description": "Learn Python programming with focus on data analysis and visualization.",
+      "capacity": 25,
+      "available_spots": 25,
+      "type": "programming",
+      "availability": "registration_open",
+      "features": [
+        "python",
+        "data_analysis",
+        "visualization"
+      ],
+      "icon": "fas fa-code",
+      "date": "2025-09-28",
+      "time": "10:00-16:00",
+      "instructor": "Dr. Wilson",
+      "registrations": []
+    }
+  ]
+}

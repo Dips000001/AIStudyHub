@@ -345,7 +345,7 @@
         
         <div class="top-10-grid">
             {% for book in top_10_books %}
-            <div class="top-10-item">
+            <div class="top-10-item" onclick="addToBookshelf('{{ book.id }}')">
                 <div class="rank-number">{{ book.rank }}</div>
                 {% if book.img and book.img != 'book5.jpg' and book.img != 'ebook1.jpg' %}
                     <img src="{{ url_for('static', filename=book.img) }}" alt="{{ book.title }}" class="book-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -375,7 +375,7 @@
                 <div class="card-content">
                     <h3 class="card-title">{{ book.title }}</h3>
                     <p class="card-reason">{{ book.reason }}</p>
-                    <button class="event-btn" onclick="addToBookshelf({{ book.id }})">Add to Bookshelf</button>
+                    <button class="event-btn" onclick="addToBookshelf('{{ book.id }}')">Add to Bookshelf</button>
                 </div>
             </div>
             {% endfor %}
@@ -397,7 +397,7 @@
                     <div class="card-course">{{ book.course }}</div>
                     <h3 class="card-title">{{ book.title }}</h3>
                     <p class="card-reason">{{ book.reason }}</p>
-                    <button class="event-btn" onclick="addToBookshelf({{ book.id }})">Add to Reading List</button>
+                    <button class="event-btn" onclick="addToBookshelf('{{ book.id }}')">Add to Reading List</button>
                 </div>
             </div>
             {% endfor %}
@@ -426,6 +426,15 @@
 
 <script>
 function addToBookshelf(bookId) {
+    console.log('addToBookshelf called with bookId:', bookId);
+    
+    // Show a loading state
+    const buttons = document.querySelectorAll(`button[onclick*="${bookId}"]`);
+    buttons.forEach(button => {
+        button.disabled = true;
+        button.textContent = 'Adding...';
+    });
+    
     fetch('/add_favorite', {
         method: 'POST',
         headers: {
@@ -435,17 +444,45 @@ function addToBookshelf(bookId) {
             book_id: bookId
         })
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.status === 'success') {
-            alert('Book added to your bookshelf!');
+            if (data.added_to_favorites) {
+                alert('Book added to your bookshelf!');
+                buttons.forEach(button => {
+                    button.textContent = 'Added ✓';
+                    button.style.backgroundColor = '#28a745';
+                });
+            } else {
+                alert('Book removed from your bookshelf!');
+                buttons.forEach(button => {
+                    button.textContent = 'Add to Bookshelf';
+                    button.disabled = false;
+                    button.style.backgroundColor = '';
+                });
+            }
         } else {
-            alert('Error adding book to bookshelf');
+            console.error('Server error:', data.message);
+            alert('Error: ' + (data.message || 'Unknown error occurred'));
+            // Reset button state
+            buttons.forEach(button => {
+                button.disabled = false;
+                button.textContent = 'Add to Bookshelf';
+            });
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        alert('Error adding book to bookshelf');
+        console.error('Network/JS Error:', error);
+        alert('Error adding book to bookshelf: ' + error.message);
+        // Reset button state
+        buttons.forEach(button => {
+            button.disabled = false;
+            button.textContent = 'Add to Bookshelf';
+        });
     });
 }
 </script>

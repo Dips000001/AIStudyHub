@@ -37,65 +37,33 @@
             <h2>Study Rooms</h2>
             <p>Book individual and group study rooms for focused learning sessions.</p>
             <div class="resource-grid">
-                <!-- Individual Study Room -->
+                {% for room in study_rooms %}
                 <div class="resource-card">
                     <div class="resource-placeholder">
-                        <i class="fas fa-user" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Individual Study Room
+                        <i class="{{ room.icon }}" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        {{ room.type|title }} Study Room
                     </div>
                     <div class="resource-info">
-                        <h3 class="resource-title">Individual Study Room A1</h3>
-                        <p class="resource-description">Quiet space perfect for individual study with desk, chair, and power outlets.</p>
+                        <h3 class="resource-title">{{ room.name }}</h3>
+                        <p class="resource-description">{{ room.description }}</p>
                         <div class="resource-details">
-                            <span class="capacity">Capacity: 1 person</span>
-                            <span class="availability">Available</span>
+                            <span class="capacity">Capacity: {{ room.capacity }} person{% if room.capacity != 1 %}s{% endif %}</span>
+                            <span class="availability {% if room.availability == 'occupied' %}unavailable{% endif %}">
+                                {% if room.availability == 'available' %}Available{% else %}{{ room.availability|title }}{% endif %}
+                            </span>
                         </div>
                         <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('study-room-a1')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('study-room-a1')">View Details</button>
+                            {% if room.availability == 'available' %}
+                                <button class="btn btn-primary" onclick="bookResource('{{ room.id }}', 'study_room')">Book Now</button>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Currently {{ room.availability|title }}</button>
+                                <button class="btn btn-info" onclick="joinWaitlist('{{ room.id }}')">Join Waitlist</button>
+                            {% endif %}
+                            <button class="btn btn-secondary" onclick="viewDetails('{{ room.id }}')">View Details</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Group Study Room -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-users" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Group Study Room
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Group Study Room B1</h3>
-                        <p class="resource-description">Collaborative space with whiteboard, projector, and seating for up to 8 people.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Capacity: 8 people</span>
-                            <span class="availability">Available</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('study-room-b1')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('study-room-b1')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Silent Study Room -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-volume-mute" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Silent Study Room
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Silent Study Room C1</h3>
-                        <p class="resource-description">Ultra-quiet environment for deep focus and concentration.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Capacity: 4 people</span>
-                            <span class="availability unavailable">Occupied</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-secondary" disabled>Currently Occupied</button>
-                            <button class="btn btn-info" onclick="joinWaitlist('study-room-c1')">Join Waitlist</button>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -104,85 +72,33 @@
             <h2>Special Rooms</h2>
             <p>Book specialized facilities for presentations, meetings, and collaborative work.</p>
             <div class="resource-grid">
-                <!-- Conference Room -->
+                {% for room in special_rooms %}
                 <div class="resource-card">
                     <div class="resource-placeholder">
-                        <i class="fas fa-handshake" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Conference Room
+                        <i class="{{ room.icon }}" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        {{ room.type|title }} Room
                     </div>
                     <div class="resource-info">
-                        <h3 class="resource-title">Conference Room Alpha</h3>
-                        <p class="resource-description">Professional meeting space with video conferencing, large display, and seating for 12.</p>
+                        <h3 class="resource-title">{{ room.name }}</h3>
+                        <p class="resource-description">{{ room.description }}</p>
                         <div class="resource-details">
-                            <span class="capacity">Capacity: 12 people</span>
-                            <span class="availability">Available</span>
+                            <span class="capacity">Capacity: {{ room.capacity }} people</span>
+                            <span class="availability {% if room.availability != 'available' %}unavailable{% endif %}">
+                                {% if room.availability == 'available' %}Available{% else %}{{ room.availability|replace('_', ' ')|title }}{% endif %}
+                            </span>
                         </div>
                         <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('conference-alpha')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('conference-alpha')">View Details</button>
+                            {% if room.availability == 'available' %}
+                                <button class="btn btn-primary" onclick="bookResource('{{ room.id }}', 'special_room')">Book Now</button>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Currently {{ room.availability|replace('_', ' ')|title }}</button>
+                                <button class="btn btn-info" onclick="joinWaitlist('{{ room.id }}')">Join Waitlist</button>
+                            {% endif %}
+                            <button class="btn btn-secondary" onclick="viewDetails('{{ room.id }}')">View Details</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Presentation Hall -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-chalkboard-teacher" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Presentation Hall
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Main Presentation Hall</h3>
-                        <p class="resource-description">Large auditorium-style space perfect for presentations and seminars.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Capacity: 50 people</span>
-                            <span class="availability">Available</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('presentation-hall')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('presentation-hall')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Workstation -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-desktop" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Workstation
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Computer Workstation Lab</h3>
-                        <p class="resource-description">High-performance computers with specialized software for research and development.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Capacity: 20 workstations</span>
-                            <span class="availability">Available</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('workstation-lab')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('workstation-lab')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Studio -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-video" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Media Studio
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Media Production Studio</h3>
-                        <p class="resource-description">Professional studio with lighting, cameras, and audio equipment for content creation.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Capacity: 6 people</span>
-                            <span class="availability unavailable">In Use</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-secondary" disabled>Currently In Use</button>
-                            <button class="btn btn-info" onclick="joinWaitlist('media-studio')">Join Waitlist</button>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -191,85 +107,33 @@
             <h2>Devices</h2>
             <p>Borrow specialized equipment and devices for your projects and presentations.</p>
             <div class="resource-grid">
-                <!-- 3D Printer -->
+                {% for device in devices %}
                 <div class="resource-card">
                     <div class="resource-placeholder">
-                        <i class="fas fa-cube" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        3D Printer
+                        <i class="{{ device.icon }}" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        {{ device.type|replace('_', ' ')|title }}
                     </div>
                     <div class="resource-info">
-                        <h3 class="resource-title">3D Printer - Ultimaker S3</h3>
-                        <p class="resource-description">High-quality 3D printer for prototyping and creative projects.</p>
+                        <h3 class="resource-title">{{ device.name }}</h3>
+                        <p class="resource-description">{{ device.description }}</p>
                         <div class="resource-details">
-                            <span class="capacity">Max print time: 24 hours</span>
-                            <span class="availability">Available</span>
+                            <span class="capacity">{{ device.capacity }}</span>
+                            <span class="availability {% if device.availability != 'available' %}unavailable{% endif %}">
+                                {% if device.availability == 'available' %}Available{% else %}{{ device.availability|replace('_', ' ')|title }}{% endif %}
+                            </span>
                         </div>
                         <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('3d-printer-s3')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('3d-printer-s3')">View Details</button>
+                            {% if device.availability == 'available' %}
+                                <button class="btn btn-primary" onclick="bookResource('{{ device.id }}', 'device')">Book Now</button>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>Currently {{ device.availability|replace('_', ' ')|title }}</button>
+                                <button class="btn btn-info" onclick="joinWaitlist('{{ device.id }}')">Join Waitlist</button>
+                            {% endif %}
+                            <button class="btn btn-secondary" onclick="viewDetails('{{ device.id }}')">View Details</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Projector -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-video" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Projector
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Portable Projector - Epson</h3>
-                        <p class="resource-description">High-resolution portable projector perfect for presentations and events.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Loan period: 7 days</span>
-                            <span class="availability">Available</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('projector-epson')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('projector-epson')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Microphone -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-microphone" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Microphone
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Wireless Microphone Set</h3>
-                        <p class="resource-description">Professional wireless microphone system for presentations and recordings.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Loan period: 3 days</span>
-                            <span class="availability unavailable">On Loan</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-secondary" disabled>Currently On Loan</button>
-                            <button class="btn btn-info" onclick="joinWaitlist('microphone-wireless')">Join Waitlist</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Video Recorder -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Video Recorder
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">4K Video Camera</h3>
-                        <p class="resource-description">Professional 4K video camera with stabilization and multiple lenses.</p>
-                        <div class="resource-details">
-                            <span class="capacity">Loan period: 5 days</span>
-                            <span class="availability">Available</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-primary" onclick="bookResource('video-camera-4k')">Book Now</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('video-camera-4k')">View Details</button>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
 
@@ -278,85 +142,38 @@
             <h2>Workshop Registration</h2>
             <p>Register for educational workshops and training sessions to enhance your skills.</p>
             <div class="resource-grid">
-                <!-- 3D Printing Workshop -->
+                {% for workshop in workshops %}
                 <div class="resource-card">
                     <div class="resource-placeholder">
-                        <i class="fas fa-graduation-cap" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        3D Printing Workshop
+                        <i class="{{ workshop.icon }}" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
+                        {{ workshop.type|replace('_', ' ')|title }} Workshop
                     </div>
                     <div class="resource-info">
-                        <h3 class="resource-title">Introduction to 3D Printing</h3>
-                        <p class="resource-description">Learn the basics of 3D modeling and printing. Includes hands-on experience.</p>
+                        <h3 class="resource-title">{{ workshop.name }}</h3>
+                        <p class="resource-description">{{ workshop.description }}</p>
                         <div class="resource-details">
-                            <span class="capacity">15 spots available</span>
-                            <span class="availability">Registration Open</span>
+                            <span class="capacity">{{ workshop.available_spots }} spots available</span>
+                            <span class="availability {% if workshop.availability != 'registration_open' %}unavailable{% endif %}">
+                                {% if workshop.availability == 'registration_open' %}Registration Open{% else %}{{ workshop.availability|replace('_', ' ')|title }}{% endif %}
+                            </span>
                         </div>
                         <div class="resource-actions">
-                            <button class="btn btn-success" onclick="registerWorkshop('3d-printing-intro')">Register</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('3d-printing-intro')">View Details</button>
+                            {% if workshop.id in user_workshop_registrations %}
+                                <button class="btn btn-warning" onclick="deregisterWorkshop('{{ workshop.id }}')">Deregister</button>
+                                <span style="color: green; font-weight: bold; margin-left: 10px;">✓ Registered</span>
+                            {% elif workshop.availability == 'registration_open' and workshop.available_spots > 0 %}
+                                <button class="btn btn-success" onclick="registerWorkshop('{{ workshop.id }}')">Register</button>
+                            {% else %}
+                                <button class="btn btn-secondary" disabled>{{ workshop.availability|replace('_', ' ')|title }}</button>
+                                {% if workshop.available_spots <= 0 %}
+                                    <button class="btn btn-warning" onclick="joinWaitlist('{{ workshop.id }}')">Join Waitlist</button>
+                                {% endif %}
+                            {% endif %}
+                            <button class="btn btn-secondary" onclick="viewDetails('{{ workshop.id }}')">View Details</button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Research Methods Workshop -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-search" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Research Methods
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Advanced Research Methods</h3>
-                        <p class="resource-description">Master research methodologies and data analysis techniques for academic success.</p>
-                        <div class="resource-details">
-                            <span class="capacity">20 spots available</span>
-                            <span class="availability">Registration Open</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-success" onclick="registerWorkshop('research-methods')">Register</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('research-methods')">View Details</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Digital Media Workshop -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-film" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Digital Media
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Digital Media Production</h3>
-                        <p class="resource-description">Create professional videos and multimedia content using industry-standard tools.</p>
-                        <div class="resource-details">
-                            <span class="capacity">12 spots available</span>
-                            <span class="availability unavailable">Registration Closed</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-secondary" disabled>Registration Closed</button>
-                            <button class="btn btn-warning" onclick="joinWaitlist('digital-media')">Join Waitlist</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Programming Workshop -->
-                <div class="resource-card">
-                    <div class="resource-placeholder">
-                        <i class="fas fa-code" style="font-size: 3rem; margin-bottom: 10px;"></i><br>
-                        Programming
-                    </div>
-                    <div class="resource-info">
-                        <h3 class="resource-title">Python for Data Science</h3>
-                        <p class="resource-description">Learn Python programming with focus on data analysis and visualization.</p>
-                        <div class="resource-details">
-                            <span class="capacity">25 spots available</span>
-                            <span class="availability">Registration Open</span>
-                        </div>
-                        <div class="resource-actions">
-                            <button class="btn btn-success" onclick="registerWorkshop('python-data-science')">Register</button>
-                            <button class="btn btn-secondary" onclick="viewDetails('python-data-science')">View Details</button>
-                        </div>
-                    </div>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -434,28 +251,248 @@ function openCategoryByName(categoryName) {
     });
 }
 
-function bookResource(resourceId) {
-    alert('Booking ' + resourceId + '...\
-This would open a booking form with date/time selection.');
-    // Here you would typically open a modal or redirect to a booking form
+function bookResource(resourceId, resourceType) {
+    // Create a modal for booking details
+    const bookingForm = `
+        <div id="bookingModal" style="
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0,0,0,0.5); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            z-index: 1000;">
+            <div style="
+                background: white; 
+                padding: 20px; 
+                border-radius: 8px; 
+                max-width: 400px; 
+                width: 90%;">
+                <h3>Book Resource</h3>
+                <form id="bookingFormData">
+                    <div style="margin-bottom: 15px;">
+                        <label>Date:</label>
+                        <input type="date" id="bookingDate" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label>Start Time:</label>
+                        <input type="time" id="startTime" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label>End Time:</label>
+                        <input type="time" id="endTime" required style="width: 100%; padding: 8px; margin-top: 5px;">
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" style="flex: 1; padding: 10px; background: #007bff; color: white; border: none; border-radius: 4px;">Book Now</button>
+                        <button type="button" onclick="closeBookingModal()" style="flex: 1; padding: 10px; background: #6c757d; color: white; border: none; border-radius: 4px;">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', bookingForm);
+    
+    // Set minimum date to today
+    document.getElementById('bookingDate').min = new Date().toISOString().split('T')[0];
+    
+    // Handle form submission
+    document.getElementById('bookingFormData').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const bookingData = {
+            resource_id: resourceId,
+            resource_type: resourceType,
+            date: document.getElementById('bookingDate').value,
+            start_time: document.getElementById('startTime').value,
+            end_time: document.getElementById('endTime').value
+        };
+        
+        fetch('/api/book-resource', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(bookingData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Resource booked successfully!');
+                closeBookingModal();
+                location.reload(); // Refresh to update availability
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while booking the resource.');
+        });
+    });
+}
+
+function closeBookingModal() {
+    const modal = document.getElementById('bookingModal');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 function viewDetails(resourceId) {
-    alert('Viewing details for ' + resourceId + '...\
-This would show detailed information about the resource.');
-    // Here you would typically show a modal with detailed information
+    fetch(`/api/get-resource-details/${resourceId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const resource = data.resource;
+                let detailsHtml = `
+                    <div id="detailsModal" style="
+                        position: fixed; 
+                        top: 0; 
+                        left: 0; 
+                        width: 100%; 
+                        height: 100%; 
+                        background: rgba(0,0,0,0.5); 
+                        display: flex; 
+                        justify-content: center; 
+                        align-items: center; 
+                        z-index: 1000;">
+                        <div style="
+                            background: white; 
+                            padding: 20px; 
+                            border-radius: 8px; 
+                            max-width: 500px; 
+                            width: 90%; 
+                            max-height: 80%; 
+                            overflow-y: auto;">
+                            <h3>${resource.name}</h3>
+                            <p><strong>Description:</strong> ${resource.description}</p>
+                            <p><strong>Capacity:</strong> ${resource.capacity}</p>
+                            <p><strong>Type:</strong> ${resource.type}</p>
+                            <p><strong>Availability:</strong> ${resource.availability}</p>
+                `;
+                
+                if (resource.features) {
+                    detailsHtml += `<p><strong>Features:</strong> ${resource.features.join(', ')}</p>`;
+                }
+                
+                if (resource.date) {
+                    detailsHtml += `<p><strong>Date:</strong> ${resource.date}</p>`;
+                }
+                
+                if (resource.time) {
+                    detailsHtml += `<p><strong>Time:</strong> ${resource.time}</p>`;
+                }
+                
+                if (resource.instructor) {
+                    detailsHtml += `<p><strong>Instructor:</strong> ${resource.instructor}</p>`;
+                }
+                
+                detailsHtml += `
+                            <button onclick="closeDetailsModal()" style="
+                                padding: 10px 20px; 
+                                background: #007bff; 
+                                color: white; 
+                                border: none; 
+                                border-radius: 4px; 
+                                margin-top: 15px;">Close</button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertAdjacentHTML('beforeend', detailsHtml);
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while fetching resource details.');
+        });
+}
+
+function closeDetailsModal() {
+    const modal = document.getElementById('detailsModal');
+    if (modal) {
+        modal.remove();
+    }
 }
 
 function registerWorkshop(workshopId) {
-    alert('Registering for ' + workshopId + '...\
-This would open a registration form.');
-    // Here you would typically open a registration form
+    if (confirm('Are you sure you want to register for this workshop?')) {
+        fetch('/api/register-workshop', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({workshop_id: workshopId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Workshop registration successful!');
+                location.reload(); // Refresh to update availability
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while registering for the workshop.');
+        });
+    }
+}
+
+function deregisterWorkshop(workshopId) {
+    if (confirm('Are you sure you want to deregister from this workshop?')) {
+        fetch('/api/deregister-workshop', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({workshop_id: workshopId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Workshop deregistration successful!');
+                location.reload(); // Refresh to update availability
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while deregistering from the workshop.');
+        });
+    }
 }
 
 function joinWaitlist(resourceId) {
-    alert('Joining waitlist for ' + resourceId + '...\
-You will be notified when it becomes available.');
-    // Here you would typically add the user to a waitlist
+    if (confirm('Would you like to join the waitlist for this resource?')) {
+        fetch('/api/join-waitlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({resource_id: resourceId})
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Added to waitlist successfully! You will be notified when the resource becomes available.');
+            } else {
+                alert('Error: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while joining the waitlist.');
+        });
+    }
 }
 
 // Initialize search functionality

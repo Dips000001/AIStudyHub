@@ -1,0 +1,38 @@
+{
+  "bookings": [
+    {
+      "id": "booking_1",
+      "user_id": "ety",
+      "resource_id": "study-room-a1",
+      "resource_type": "study_room",
+      "date": "2025-09-10",
+      "start_time": "01:02",
+      "end_time": "01:03",
+      "status": "confirmed",
+      "created_at": "2025-09-08"
+    },
+    {
+      "id": "booking_2",
+      "user_id": "ety",
+      "resource_id": "study-room-a1",
+      "resource_type": "study_room",
+      "date": "2025-09-10",
+      "start_time": "01:02",
+      "end_time": "01:40",
+      "status": "confirmed",
+      "created_at": "2025-09-08"
+    }
+  ],
+  "waitlists": [
+    {
+      "user_id": "ety",
+      "resource_id": "digital-media",
+      "joined_date": "2025-09-08"
+    },
+    {
+      "user_id": "ety",
+      "resource_id": "study-room-c1",
+      "joined_date": "2025-09-08"
+    }
+  ]
+}

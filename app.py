@@ -11,6 +11,11 @@ USERS_FILE = os.path.join(DATA_DIR, 'users.json')
 LIBRARY_BOOKS_FILE = os.path.join(DATA_DIR, 'library_books.json')
 EBOOKS_FILE = os.path.join(DATA_DIR, 'ebooks.json')
 INTERNAL_MATERIALS_FILE = os.path.join(DATA_DIR, 'internal_materials.json')
+STUDY_ROOMS_FILE = os.path.join(DATA_DIR, 'study_rooms.json')
+SPECIAL_ROOMS_FILE = os.path.join(DATA_DIR, 'special_rooms.json')
+DEVICES_FILE = os.path.join(DATA_DIR, 'devices.json')
+WORKSHOPS_FILE = os.path.join(DATA_DIR, 'workshops.json')
+BOOKINGS_FILE = os.path.join(DATA_DIR, 'bookings.json')
 
 # Helper functions for data management
 def load_json(file_path):
@@ -37,6 +42,37 @@ def get_ebooks():
 
 def get_internal_materials():
     return load_json(INTERNAL_MATERIALS_FILE)
+
+# Booking system helper functions
+def get_study_rooms():
+    return load_json(STUDY_ROOMS_FILE)
+
+def save_study_rooms(data):
+    save_json(STUDY_ROOMS_FILE, data)
+
+def get_special_rooms():
+    return load_json(SPECIAL_ROOMS_FILE)
+
+def save_special_rooms(data):
+    save_json(SPECIAL_ROOMS_FILE, data)
+
+def get_devices():
+    return load_json(DEVICES_FILE)
+
+def save_devices(data):
+    save_json(DEVICES_FILE, data)
+
+def get_workshops():
+    return load_json(WORKSHOPS_FILE)
+
+def save_workshops(data):
+    save_json(WORKSHOPS_FILE, data)
+
+def get_bookings():
+    return load_json(BOOKINGS_FILE)
+
+def save_bookings(data):
+    save_json(BOOKINGS_FILE, data)
 
 @app.route('/')
 def index():
@@ -129,7 +165,29 @@ def dashboard():
 def booking():
     if 'username' not in session:
         return redirect(url_for('index'))
-    return render_template('booking.html')
+    
+    username = session['username']
+    
+    # Load all booking data
+    study_rooms = get_study_rooms()
+    special_rooms = get_special_rooms()
+    devices = get_devices()
+    workshops = get_workshops()
+    
+    # Get user's workshop registrations
+    user_workshop_registrations = []
+    for workshop in workshops.get('workshops', []):
+        for registration in workshop.get('registrations', []):
+            if registration['user_id'] == username:
+                user_workshop_registrations.append(workshop['id'])
+                break
+    
+    return render_template('booking.html', 
+                         study_rooms=study_rooms.get('study_rooms', []),
+                         special_rooms=special_rooms.get('special_rooms', []),
+                         devices=devices.get('devices', []),
+                         workshops=workshops.get('workshops', []),
+                         user_workshop_registrations=user_workshop_registrations)
 
 @app.route('/recommendations')
 def recommendations():
@@ -161,48 +219,112 @@ def recommendations():
             user_id != username):
             same_cohort_users.append(user_data)
     
-    # Get popular books among cohort (simulate with sample data)
-    top_10_books = [
-        {'id': 5, 'title': 'Python Programming', 'img': 'book5.jpg', 'rank': 1},
-        {'id': 6, 'title': 'Digital Marketing', 'img': 'ebook1.jpg', 'rank': 2},
-        {'id': 3, 'title': 'Utah', 'img': 'book3.jpg', 'rank': 3},
-        {'id': 7, 'title': 'Course Notes', 'img': 'notes.jpg', 'rank': 4},
-        {'id': 4, 'title': 'American History', 'img': 'book4.jpg', 'rank': 5},
-        {'id': 8, 'title': 'Lab Instructions', 'img': 'lab.jpg', 'rank': 6},
-        {'id': 1, 'title': 'The Bully', 'img': './img/library/001.png', 'rank': 7},
-        {'id': 2, 'title': 'Destination Germany', 'img': 'book2.jpg', 'rank': 8},
-    ]
+    # Get popular books among cohort (using real data from JSON files)
+    top_10_books = []
     
-    # Generate personalized suggestions based on GPA/performance
+    # Create a list of all books with their real titles and images
+    book_candidates = []
+    
+    # Add library books
+    for book in library_books:
+        book_candidates.append({
+            'id': book['id'],
+            'title': book['title'],
+            'img': book['img'],
+            'subject': book.get('subject', ''),
+            'level': book.get('level', '')
+        })
+    
+    # Add ebooks
+    for book in ebooks:
+        book_candidates.append({
+            'id': book['id'],
+            'title': book['title'],
+            'img': book['img'],
+            'subject': book.get('subject', ''),
+            'level': book.get('level', '')
+        })
+    
+    # Add internal materials
+    for book in internal_materials:
+        book_candidates.append({
+            'id': book['id'],
+            'title': book['title'],
+            'img': book['img'],
+            'subject': book.get('subject', ''),
+            'course': book.get('course', '')
+        })
+    
+    # Select top 10 books (prioritize by subject relevance and level)
+    ranked_books = []
+    for i, book in enumerate(book_candidates[:10]):  # Take first 10 books
+        ranked_books.append({
+            'id': book['id'],
+            'title': book['title'],
+            'img': book['img'],
+            'rank': i + 1
+        })
+    
+    top_10_books = ranked_books
+    
+    # Generate personalized suggestions based on GPA/performance (using real data)
     user_gpa = current_user.get('gpa', 3.5)  # Default GPA
     personalized_books = []
     
+    # Find specific books by ID from our book_lookup
     if user_gpa >= 3.7:  # High performers
-        personalized_books = [
-            {'id': 5, 'title': 'Advanced Python Programming', 'reason': 'Perfect for high achievers in Computer Science'},
-            {'id': 6, 'title': 'Digital Marketing Strategy', 'reason': 'Expand your skill set with marketing knowledge'},
-            {'id': 7, 'title': 'Research Methodology', 'reason': 'Prepare for advanced research projects'}
+        book_ids = [4, 2, 14]  # Database Systems, Advanced Programming, Algorithm Study Guide
+        reasons = [
+            'Perfect for high achievers - advanced database concepts',
+            'Expand your skills with advanced programming paradigms',
+            'Prepare for advanced algorithm courses'
         ]
     elif user_gpa >= 3.0:  # Average performers
-        personalized_books = [
-            {'id': 5, 'title': 'Python Programming Basics', 'reason': 'Strengthen your programming fundamentals'},
-            {'id': 8, 'title': 'Study Skills Guide', 'reason': 'Improve your academic performance'},
-            {'id': 4, 'title': 'Course Review Materials', 'reason': 'Review key concepts for your courses'}
+        book_ids = [5, 7, 3]  # Python Programming, CS101 Notes, Data Structures
+        reasons = [
+            'Strengthen your programming fundamentals',
+            'Review course materials to improve performance',
+            'Master essential data structures and algorithms'
         ]
     else:  # Need support
-        personalized_books = [
-            {'id': 7, 'title': 'Study Techniques', 'reason': 'Essential study methods for academic success'},
-            {'id': 8, 'title': 'Time Management', 'reason': 'Organize your schedule effectively'},
-            {'id': 5, 'title': 'Programming Fundamentals', 'reason': 'Build strong foundation in programming'}
+        book_ids = [1, 7, 8]  # Intro to CS, Course Notes, Lab Instructions
+        reasons = [
+            'Build strong foundation with computer science basics',
+            'Essential study methods from course notes',
+            'Step-by-step guidance with lab instructions'
         ]
     
-    # Course-based recommendations (simulate registered courses)
+    for i, book_id in enumerate(book_ids):
+        if book_id in book_lookup:
+            book = book_lookup[book_id]
+            personalized_books.append({
+                'id': book['id'],
+                'title': book['title'],
+                'reason': reasons[i]
+            })
+    
+    # Course-based recommendations (using real course materials)
     registered_courses = ['CS101', 'CS201', 'MATH150']  # Sample courses
-    course_books = [
-        {'id': 5, 'title': 'Python Programming', 'course': 'CS101', 'reason': 'Required reading for CS101'},
-        {'id': 7, 'title': 'Algorithm Design', 'course': 'CS201', 'reason': 'Supplementary material for CS201'},
-        {'id': 4, 'title': 'Discrete Mathematics', 'course': 'MATH150', 'reason': 'Essential for MATH150'}
-    ]
+    course_books = []
+    
+    # Find course-related books
+    course_book_mapping = {
+        'CS101': {'id': 7, 'reason': 'Comprehensive lecture notes for your current course'},
+        'CS201': {'id': 14, 'reason': 'Complete study guide for algorithm topics'},
+        'MATH150': {'id': 15, 'reason': 'Essential formulas and reference material'}
+    }
+    
+    for course in registered_courses:
+        if course in course_book_mapping:
+            book_id = course_book_mapping[course]['id']
+            if book_id in book_lookup:
+                book = book_lookup[book_id]
+                course_books.append({
+                    'id': book['id'],
+                    'title': book['title'],
+                    'course': course,
+                    'reason': course_book_mapping[course]['reason']
+                })
     
     # Latest events and promotions
     events = [
@@ -760,6 +882,194 @@ def profile():
         }
         
     return render_template('profile.html', user=user_data)
+
+# Booking API Routes
+@app.route('/api/book-resource', methods=['POST'])
+def book_resource():
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    data = request.get_json()
+    resource_id = data.get('resource_id')
+    resource_type = data.get('resource_type')
+    booking_date = data.get('date')
+    start_time = data.get('start_time')
+    end_time = data.get('end_time')
+    
+    username = session['username']
+    
+    # Load bookings
+    bookings_data = get_bookings()
+    if 'bookings' not in bookings_data:
+        bookings_data['bookings'] = []
+    
+    # Create new booking
+    new_booking = {
+        'id': f"booking_{len(bookings_data['bookings']) + 1}",
+        'user_id': username,
+        'resource_id': resource_id,
+        'resource_type': resource_type,
+        'date': booking_date,
+        'start_time': start_time,
+        'end_time': end_time,
+        'status': 'confirmed',
+        'created_at': '2025-09-08'
+    }
+    
+    bookings_data['bookings'].append(new_booking)
+    save_bookings(bookings_data)
+    
+    return jsonify({'success': True, 'message': 'Resource booked successfully', 'booking': new_booking})
+
+@app.route('/api/register-workshop', methods=['POST'])
+def register_workshop():
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    data = request.get_json()
+    workshop_id = data.get('workshop_id')
+    username = session['username']
+    
+    # Load workshops
+    workshops_data = get_workshops()
+    workshops = workshops_data.get('workshops', [])
+    
+    # Find the workshop
+    workshop = None
+    for w in workshops:
+        if w['id'] == workshop_id:
+            workshop = w
+            break
+    
+    if not workshop:
+        return jsonify({'success': False, 'message': 'Workshop not found'}), 404
+    
+    # Check if user is already registered
+    if any(reg['user_id'] == username for reg in workshop.get('registrations', [])):
+        return jsonify({'success': False, 'message': 'Already registered for this workshop'}), 400
+    
+    # Check availability
+    if workshop['available_spots'] <= 0:
+        return jsonify({'success': False, 'message': 'Workshop is full'}), 400
+    
+    # Register user
+    if 'registrations' not in workshop:
+        workshop['registrations'] = []
+    
+    workshop['registrations'].append({
+        'user_id': username,
+        'registration_date': '2025-09-08'
+    })
+    
+    workshop['available_spots'] -= 1
+    
+    if workshop['available_spots'] <= 0:
+        workshop['availability'] = 'registration_closed'
+    
+    save_workshops(workshops_data)
+    
+    return jsonify({'success': True, 'message': 'Workshop registration successful'})
+
+@app.route('/api/deregister-workshop', methods=['POST'])
+def deregister_workshop():
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    data = request.get_json()
+    workshop_id = data.get('workshop_id')
+    username = session['username']
+    
+    # Load workshops
+    workshops_data = get_workshops()
+    workshops = workshops_data.get('workshops', [])
+    
+    # Find the workshop
+    workshop = None
+    for w in workshops:
+        if w['id'] == workshop_id:
+            workshop = w
+            break
+    
+    if not workshop:
+        return jsonify({'success': False, 'message': 'Workshop not found'}), 404
+    
+    # Check if user is registered
+    user_registration = None
+    for i, reg in enumerate(workshop.get('registrations', [])):
+        if reg['user_id'] == username:
+            user_registration = i
+            break
+    
+    if user_registration is None:
+        return jsonify({'success': False, 'message': 'You are not registered for this workshop'}), 400
+    
+    # Remove user registration
+    workshop['registrations'].pop(user_registration)
+    workshop['available_spots'] += 1
+    
+    # Update availability if spots are now available
+    if workshop['available_spots'] > 0 and workshop['availability'] == 'registration_closed':
+        workshop['availability'] = 'registration_open'
+    
+    save_workshops(workshops_data)
+    
+    return jsonify({'success': True, 'message': 'Workshop deregistration successful'})
+
+@app.route('/api/join-waitlist', methods=['POST'])
+def join_waitlist():
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    data = request.get_json()
+    resource_id = data.get('resource_id')
+    username = session['username']
+    
+    # Load bookings
+    bookings_data = get_bookings()
+    if 'waitlists' not in bookings_data:
+        bookings_data['waitlists'] = []
+    
+    # Check if already on waitlist
+    if any(w['user_id'] == username and w['resource_id'] == resource_id for w in bookings_data['waitlists']):
+        return jsonify({'success': False, 'message': 'Already on waitlist'}), 400
+    
+    # Add to waitlist
+    waitlist_entry = {
+        'user_id': username,
+        'resource_id': resource_id,
+        'joined_date': '2025-09-08'
+    }
+    
+    bookings_data['waitlists'].append(waitlist_entry)
+    save_bookings(bookings_data)
+    
+    return jsonify({'success': True, 'message': 'Added to waitlist successfully'})
+
+@app.route('/api/get-resource-details/<resource_id>')
+def get_resource_details(resource_id):
+    # Search through all resource types
+    all_resources = []
+    
+    study_rooms = get_study_rooms().get('study_rooms', [])
+    special_rooms = get_special_rooms().get('special_rooms', [])
+    devices = get_devices().get('devices', [])
+    workshops = get_workshops().get('workshops', [])
+    
+    all_resources.extend(study_rooms)
+    all_resources.extend(special_rooms)
+    all_resources.extend(devices)
+    all_resources.extend(workshops)
+    
+    resource = None
+    for r in all_resources:
+        if r['id'] == resource_id:
+            resource = r
+            break
+    
+    if not resource:
+        return jsonify({'success': False, 'message': 'Resource not found'}), 404
+    
+    return jsonify({'success': True, 'resource': resource})
 
 if __name__ == '__main__':
     # Ensure data directory exists

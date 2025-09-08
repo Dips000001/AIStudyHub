@@ -1,0 +1,45 @@
+{
+  "study_rooms": [
+    {
+      "id": "study-room-a1",
+      "name": "Individual Study Room A1",
+      "description": "Quiet space perfect for individual study with desk, chair, and power outlets.",
+      "capacity": 1,
+      "type": "individual",
+      "availability": "available",
+      "features": ["desk", "chair", "power_outlets", "quiet"],
+      "icon": "fas fa-user",
+      "bookings": []
+    },
+    {
+      "id": "study-room-b1",
+      "name": "Group Study Room B1",
+      "description": "Collaborative space with whiteboard, projector, and seating for up to 8 people.",
+      "capacity": 8,
+      "type": "group",
+      "availability": "available",
+      "features": ["whiteboard", "projector", "seating", "collaborative"],
+      "icon": "fas fa-users",
+      "bookings": []
+    },
+    {
+      "id": "study-room-c1",
+      "name": "Silent Study Room C1",
+      "description": "Ultra-quiet environment for deep focus and concentration.",
+      "capacity": 4,
+      "type": "silent",
+      "availability": "occupied",
+      "features": ["ultra_quiet", "focus", "concentration"],
+      "icon": "fas fa-volume-mute",
+      "bookings": [
+        {
+          "user_id": "user123",
+          "date": "2025-09-08",
+          "start_time": "09:00",
+          "end_time": "12:00",
+          "status": "active"
+        }
+      ]
+    }
+  ]
+}

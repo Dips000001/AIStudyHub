@@ -1,0 +1,60 @@
+{
+  "devices": [
+    {
+      "id": "3d-printer-s3",
+      "name": "3D Printer - Ultimaker S3",
+      "description": "High-quality 3D printer for prototyping and creative projects.",
+      "capacity": "Max print time: 24 hours",
+      "type": "3d_printer",
+      "availability": "available",
+      "features": ["high_quality", "prototyping", "creative_projects"],
+      "icon": "fas fa-cube",
+      "loan_period": "24 hours",
+      "bookings": []
+    },
+    {
+      "id": "projector-epson",
+      "name": "Portable Projector - Epson",
+      "description": "High-resolution portable projector perfect for presentations and events.",
+      "capacity": "Loan period: 7 days",
+      "type": "projector",
+      "availability": "available",
+      "features": ["high_resolution", "portable", "presentations"],
+      "icon": "fas fa-video",
+      "loan_period": "7 days",
+      "bookings": []
+    },
+    {
+      "id": "microphone-wireless",
+      "name": "Wireless Microphone Set",
+      "description": "Professional wireless microphone system for presentations and recordings.",
+      "capacity": "Loan period: 3 days",
+      "type": "microphone",
+      "availability": "on_loan",
+      "features": ["wireless", "professional", "presentations", "recordings"],
+      "icon": "fas fa-microphone",
+      "loan_period": "3 days",
+      "bookings": [
+        {
+          "user_id": "user789",
+          "date": "2025-09-07",
+          "loan_start": "2025-09-07",
+          "loan_end": "2025-09-10",
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "id": "video-camera-4k",
+      "name": "4K Video Camera",
+      "description": "Professional 4K video camera with stabilization and multiple lenses.",
+      "capacity": "Loan period: 5 days",
+      "type": "camera",
+      "availability": "available",
+      "features": ["4k", "stabilization", "multiple_lenses", "professional"],
+      "icon": "fas fa-camera",
+      "loan_period": "5 days",
+      "bookings": []
+    }
+  ]
+}
