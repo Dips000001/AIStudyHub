@@ -2,14 +2,18 @@
   "alex": {
     "password": "password",
     "favorites": [
-      2,
-      3,
-      6
+      8,
+      14
     ],
-    "my_bookshelf": [
+    "borrowed_books": [
       1,
       2,
-      6
+      6,
+      11,
+      9
+    ],
+    "reserved_books": [
+      10
     ],
     "name": "Alex Smith",
     "username": "alex",
@@ -33,11 +37,11 @@
       3,
       5
     ],
-    "my_bookshelf": [
+    "borrowed_books": [
       3,
-      5,
       7
     ],
+    "reserved_books": [],
     "name": "John Doe",
     "username": "john",
     "role": "Student",
@@ -61,11 +65,11 @@
       6,
       8
     ],
-    "my_bookshelf": [
+    "borrowed_books": [
       4,
-      6,
       8
     ],
+    "reserved_books": [],
     "name": "Sarah Johnson",
     "username": "sarah",
     "role": "Student",

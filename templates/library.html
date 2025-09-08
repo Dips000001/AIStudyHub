@@ -6,8 +6,6 @@
 {% endblock %}
 
 {% block content %}
-
-
     <div class="library-header">
         <h1>My Library</h1>
         <div class="library-controls">
@@ -35,65 +33,7 @@
         <div class="bookshelf">
             <div class="shelf-wood"></div>
             <div class="books-container" id="myBookshelf">
-                <div class="book-item" data-category="borrowed">
-                    <div class="book-cover">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+UHl0aG9uPC90ZXh0Pgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiPkNyYXNoPC90ZXh0Pgo8dGV4dCB4PSI1MCIgeT0iODAiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiPkNvdXJzZTwvdGV4dD4KPC9zdmc+"
-                            alt="Python Crash Course">
-                    </div>
-                    <div class="book-info">
-                        <h4>Python Crash Course</h4>
-                        <p class="author">Eric Matthes</p>
-                        <div class="book-status borrowed">Borrowed</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite active" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn read" onclick="readBook('python-crash-course')">
-                                <i class="fas fa-book-open"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="favorite">
-                    <div class="book-cover">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMzRBODUzIi8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+Q2xlYW4gQ29kZTwvdGV4dD4KPHRleHQgeD0iNTAiIHk9IjgwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj5Sb2JlcnQgTWFydGluPC90ZXh0Pgo8L3N2Zz4="
-                            alt="Clean Code">
-                    </div>
-                    <div class="book-info">
-                        <h4>Clean Code</h4>
-                        <p class="author">Robert C. Martin</p>
-                        <div class="book-status favorite">Favorite</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite active" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn read" onclick="readBook('clean-code')">
-                                <i class="fas fa-book-open"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="borrowed">
-                    <div class="book-cover">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRkJCQzA0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0iYmxhY2siIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+RGF0YSBTY2llbmNlPC90ZXh0Pgo8dGV4dCB4PSI1MCIgeT0iNjAiIGZpbGw9ImJsYWNrIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTAiPkhhbmRib29rPC90ZXh0Pgo8L3N2Zz4="
-                            alt="Data Science Handbook">
-                    </div>
-                    <div class="book-info">
-                        <h4>Data Science Handbook</h4>
-                        <p class="author">Jake VanderPlas</p>
-                        <div class="book-status borrowed">Borrowed</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn read" onclick="readBook('data-science-handbook')">
-                                <i class="fas fa-book-open"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Books will be loaded dynamically from JSON data -->
             </div>
         </div>
     </section>
@@ -107,65 +47,7 @@
         <div class="bookshelf">
             <div class="shelf-wood"></div>
             <div class="books-container" id="schoolLibrary">
-                <div class="book-item" data-category="available">
-                    <div class="book-cover">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRUE0MzM1Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+QWxnb3JpdGhtczwvdGV4dD4KPHRleHQgeD0iNTAiIHk9IjgwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj5Db3JtZW48L3RleHQ+CjwvdGV4dD4KPC9zdmc+"
-                            alt="Introduction to Algorithms">
-                    </div>
-                    <div class="book-info">
-                        <h4>Introduction to Algorithms</h4>
-                        <p class="author">Thomas H. Cormen</p>
-                        <div class="book-status available">Available</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn borrow" onclick="borrowBook(this)">
-                                <i class="fas fa-plus"></i> Borrow
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="available">
-                    <div class="book-cover">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjOUMyN0IwIi8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+RGF0YWJhc2U8L3RleHQ+Cjx0ZXh0IHg9IjUwIiB5PSI2MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+U3lzdGVtczwvdGV4dD4KPC9zdmc+"
-                            alt="Database Systems">
-                    </div>
-                    <div class="book-info">
-                        <h4>Database System Concepts</h4>
-                        <p class="author">Abraham Silberschatz</p>
-                        <div class="book-status available">Available</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn borrow" onclick="borrowBook(this)">
-                                <i class="fas fa-plus"></i> Borrow
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="unavailable">
-                    <div class="book-cover">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjNjA3RDhCIi8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+TmV0d29ya2luZzwvdGV4dD4KPHRleHQgeD0iNTAiIHk9IjgwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj5UYW5lbmJhdW08L3RleHQ+CjwvdGV4dD4KPC9zdmc+"
-                            alt="Computer Networks">
-                    </div>
-                    <div class="book-info">
-                        <h4>Computer Networks</h4>
-                        <p class="author">Andrew S. Tanenbaum</p>
-                        <div class="book-status unavailable">Checked Out</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn reserve" onclick="reserveBook(this)">
-                                <i class="fas fa-clock"></i> Reserve
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Books will be loaded dynamically from JSON data -->
             </div>
         </div>
     </section>
@@ -179,74 +61,7 @@
         <div class="bookshelf">
             <div class="shelf-wood"></div>
             <div class="books-container" id="ebooks">
-                <div class="book-item" data-category="ebook">
-                    <div class="book-cover digital">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjMDBCQ0Q0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+SmF2YVNjcmlwdDwvdGV4dD4KPHRleHQgeD0iNTAiIHk9IjYwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj5UaGUgR29vZDwvdGV4dD4KPHRleHQgeD0iNTAiIHk9IjgwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj5QYXJ0czwvdGV4dD4KPC9zdmc+"
-                            alt="JavaScript: The Good Parts">
-                        <div class="digital-badge">
-                            <i class="fas fa-download"></i>
-                        </div>
-                    </div>
-                    <div class="book-info">
-                        <h4>JavaScript: The Good Parts</h4>
-                        <p class="author">Douglas Crockford</p>
-                        <div class="book-status ebook">E-book</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn download" onclick="downloadEbook('javascript-good-parts')">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="ebook">
-                    <div class="book-cover digital">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjRkY5ODAwIi8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+UmVhY3Q8L3RleHQ+Cjx0ZXh0IHg9IjUwIiB5PSI2MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+SGFuZGJvb2s8L3RleHQ+CjwvdGV4dD4KPC9zdmc+"
-                            alt="React Handbook">
-                        <div class="digital-badge">
-                            <i class="fas fa-download"></i>
-                        </div>
-                    </div>
-                    <div class="book-info">
-                        <h4>The React Handbook</h4>
-                        <p class="author">Flavio Copes</p>
-                        <div class="book-status ebook">E-book</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn download" onclick="downloadEbook('react-handbook')">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="ebook">
-                    <div class="book-cover digital">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjNjczQUI3Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI0MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMCI+Tm9kZS5qczwvdGV4dD4KPHRleHQgeD0iNTAiIHk9IjYwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIj5EZXNpZ24gUGF0dGVybnM8L3RleHQ+CjwvdGV4dD4KPC9zdmc+"
-                            alt="Node.js Design Patterns">
-                        <div class="digital-badge">
-                            <i class="fas fa-download"></i>
-                        </div>
-                    </div>
-                    <div class="book-info">
-                        <h4>Node.js Design Patterns</h4>
-                        <p class="author">Mario Casciaro</p>
-                        <div class="book-status ebook">E-book</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn download" onclick="downloadEbook('nodejs-design-patterns')">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- E-books will be loaded dynamically from JSON data -->
             </div>
         </div>
     </section>
@@ -260,102 +75,12 @@
         <div class="bookshelf">
             <div class="shelf-wood"></div>
             <div class="books-container" id="internalMaterials">
-                <div class="book-item" data-category="past-paper">
-                    <div class="book-cover document">
-                        <div class="document-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="document-title">CS111 Final Exam</div>
-                        <div class="document-year">2023</div>
-                    </div>
-                    <div class="book-info">
-                        <h4>CS111 Final Exam</h4>
-                        <p class="author">Computer Science Department</p>
-                        <div class="book-status past-paper">Past Paper</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn view" onclick="viewDocument('cs111-final-2023.pdf')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="catalogue">
-                    <div class="book-cover document">
-                        <div class="document-icon">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <div class="document-title">Course Catalogue</div>
-                        <div class="document-year">2024</div>
-                    </div>
-                    <div class="book-info">
-                        <h4>Course Catalogue 2024</h4>
-                        <p class="author">Academic Affairs</p>
-                        <div class="book-status catalogue">Catalogue</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn view" onclick="viewDocument('course-catalogue-2024.pdf')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="brochure">
-                    <div class="book-cover document">
-                        <div class="document-icon">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
-                        <div class="document-title">StudyHub App</div>
-                        <div class="document-year">Guide</div>
-                    </div>
-                    <div class="book-info">
-                        <h4>StudyHub App Brochure</h4>
-                        <p class="author">IT Department</p>
-                        <div class="book-status brochure">App Guide</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn view" onclick="viewDocument('studyhub-app-guide.pdf')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="book-item" data-category="past-paper">
-                    <div class="book-cover document">
-                        <div class="document-icon">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                        <div class="document-title">MATH201 Midterm</div>
-                        <div class="document-year">2023</div>
-                    </div>
-                    <div class="book-info">
-                        <h4>MATH201 Midterm Exam</h4>
-                        <p class="author">Mathematics Department</p>
-                        <div class="book-status past-paper">Past Paper</div>
-                        <div class="book-actions">
-                            <button class="action-btn favorite" onclick="toggleFavorite(this)">
-                                <i class="fas fa-heart"></i>
-                            </button>
-                            <button class="action-btn view" onclick="viewDocument('math201-midterm-2023.pdf')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <!-- Internal materials will be loaded dynamically from JSON data -->
             </div>
         </div>
     </section>
-
 {% endblock %}
+
 {% block scripts %}
 <script src="{{ url_for('static', filename='library.js') }}"></script>
 {% endblock %}

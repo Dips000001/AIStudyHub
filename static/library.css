@@ -292,6 +292,26 @@
     border: 1px solid #f5c6cb;
 }
 
+.book-status.reserved {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.book-status.user-reserved {
+    background-color: #ffeeba;
+    color: #775e02;
+    border: 1px solid #efd358;
+    font-weight: bold;
+}
+
+.book-status.user-borrowed {
+    background-color: #c3e6cb;
+    color: #155724;
+    border: 1px solid #8fd19e;
+    font-weight: bold;
+}
+
 .book-status.ebook {
     background-color: #cce5ff;
     color: #004085;
@@ -380,6 +400,15 @@
     background-color: #f9ab00;
 }
 
+.action-btn.unreserve {
+    background-color: #ea4335;
+    color: white;
+}
+
+.action-btn.unreserve:hover {
+    background-color: #d73125;
+}
+
 .action-btn.download {
     background-color: #00bcd4;
     color: white;
@@ -387,6 +416,27 @@
 
 .action-btn.download:hover {
     background-color: #00acc1;
+}
+
+.due-date,
+.modal-due-date {
+    font-size: 0.85em;
+    color: #e65100;
+    margin-top: 5px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.due-date i,
+.modal-due-date i {
+    font-size: 0.9em;
+}
+
+.modal-due-date {
+    margin-top: 10px;
+    font-size: 0.95em;
 }
 
 .action-btn.view {

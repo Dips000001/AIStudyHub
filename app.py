@@ -244,10 +244,109 @@ def library():
         return redirect(url_for('index'))
     return render_template('library.html')
 
+@app.route('/api/library_data')
+def get_library_data():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+        
+    username = session['username']
+    users = get_users()
+    
+    # Get all book sources
+    library_books = get_library_books()
+    ebooks = get_ebooks()
+    internal_materials = get_internal_materials()
+    
+    # Get user favorites, borrowed books and reserved books
+    user_favorites = users.get(username, {}).get('favorites', [])
+    borrowed_books = users.get(username, {}).get('borrowed_books', [])
+    reserved_books = users.get(username, {}).get('reserved_books', [])
+    
+    # Mark books that are borrowed or reserved by this user and add book type
+    for book in library_books:
+        book['isBorrowedByUser'] = book['id'] in borrowed_books
+        book['isReservedByUser'] = book['id'] in reserved_books
+        book['bookType'] = 'physical'
+        
+    for book in ebooks:
+        book['isReservedByUser'] = book['id'] in reserved_books
+        book['bookType'] = 'ebook'
+        
+    for book in internal_materials:
+        book['isReservedByUser'] = book['id'] in reserved_books
+        book['bookType'] = 'internal'
+    
+    # For backward compatibility
+    if 'my_bookshelf' in users.get(username, {}) and not borrowed_books:
+        borrowed_books = users[username]['my_bookshelf']
+        # Migrate data structure
+        users[username]['borrowed_books'] = borrowed_books
+        save_users(users)
+        
+    # Initialize reserved_books if it doesn't exist
+    if 'reserved_books' not in users.get(username, {}):
+        users[username]['reserved_books'] = []
+        save_users(users)
+    
+    return jsonify({
+        'status': 'success',
+        'data': {
+            'borrowedBooks': borrowed_books,
+            'favorites': user_favorites,
+            'reservedBooks': reserved_books,
+            'libraryBooks': library_books,
+            'ebooks': ebooks,
+            'internalMaterials': internal_materials
+        }
+    })
+    
+@app.route('/api/book/<int:book_id>')
+def get_book_details(book_id):
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+    
+    username = session['username']
+    users = get_users()
+    
+    # Get all book sources
+    library_books = get_library_books()
+    ebooks = get_ebooks()
+    internal_materials = get_internal_materials()
+    
+    # Search for the book in all sources
+    all_books = library_books + ebooks + internal_materials
+    
+    for book in all_books:
+        if book['id'] == book_id:
+            # Check if this book is borrowed by the current user
+            is_borrowed_by_user = False
+            if username in users and 'borrowed_books' in users[username]:
+                is_borrowed_by_user = book_id in users[username]['borrowed_books']
+            
+            book_info = dict(book)  # Make a copy to avoid modifying the original
+            book_info['isBorrowedByUser'] = is_borrowed_by_user
+            
+            return jsonify({
+                'status': 'success',
+                'book': book_info
+            })
+    
+    return jsonify({
+        'status': 'error',
+        'message': f'Book with ID {book_id} not found'
+    }), 404
+
 @app.route('/resource')
 def resource():
     if 'username' not in session:
         return redirect(url_for('index'))
+        
+    # Ensure favorites are synced from user data
+    username = session['username']
+    users = get_users()
+    if username in users and 'favorites' in users[username]:
+        session['favorites'] = users[username]['favorites']
+        session.modified = True
 
     username = session['username']
     users = get_users()
@@ -262,9 +361,15 @@ def resource():
     for book in library_books + ebooks + internal_materials:
         all_books[book['id']] = book
     
-    # Get bookshelf IDs and convert to book objects
+    # Get bookshelf IDs and favorites, then combine them
     bookshelf_ids = users[username].get('my_bookshelf', [])
-    my_bookshelf = [all_books[book_id] for book_id in bookshelf_ids if book_id in all_books]
+    favorites_ids = users[username].get('favorites', [])
+    
+    # Combine bookshelf and favorites (using a set to avoid duplicates)
+    combined_ids = list(set(bookshelf_ids + favorites_ids))
+    
+    # Convert to book objects
+    my_bookshelf = [all_books[book_id] for book_id in combined_ids if book_id in all_books]
     
     books = {
         'my_bookshelf': my_bookshelf,
@@ -281,71 +386,346 @@ def add_favorite():
         return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
 
     data = request.get_json()
+    # Log the received data for debugging
+    print(f"Received favorite request with data: {data}")
+    
     book_id = data.get('book_id')
+    # Support both traditional book_id and bookId parameter
+    if not book_id:
+        book_id = data.get('bookId')
+        
+    # Convert string IDs to integers if possible for consistency
+    try:
+        if isinstance(book_id, str) and book_id.isdigit():
+            book_id = int(book_id)
+    except:
+        pass
 
     if book_id:
         if 'favorites' not in session:
             session['favorites'] = []
             
-        if book_id not in session['favorites']:
+        username = session['username']
+        users = get_users()
+        
+        # Get book details for the response
+        library_books = get_library_books()
+        ebooks = get_ebooks()
+        internal_materials = get_internal_materials()
+        
+        all_books = {}
+        for book in library_books + ebooks + internal_materials:
+            all_books[book['id']] = book
+        
+        book_details = all_books.get(book_id)
+        
+        # Toggle favorite status
+        print(f"Current favorites: {session.get('favorites', [])}") 
+        print(f"Book ID to toggle: {book_id} (Type: {type(book_id).__name__})")
+        
+        # Check if the book is already in favorites, handling both string and int IDs
+        book_id_str = str(book_id)
+        is_favorite = False
+        
+        for fav_id in session.get('favorites', []):
+            if str(fav_id) == book_id_str:
+                is_favorite = True
+                break
+                
+        if not is_favorite:
+            # Add to favorites
+            print(f"Adding book {book_id} to favorites")
+            session['favorites'] = session.get('favorites', [])
             session['favorites'].append(book_id)
-            session.modified = True  # Make sure the session is saved
-            
-            # Update user data in JSON file
-            username = session['username']
-            users = get_users()
-            if username in users:
-                users[username]['favorites'] = session['favorites']
-                
-                # Also add to my_bookshelf if not already there
-                if 'my_bookshelf' not in users[username]:
-                    users[username]['my_bookshelf'] = []
-                
-                if book_id not in users[username]['my_bookshelf']:
-                    users[username]['my_bookshelf'].append(book_id)
-                
-                save_users(users)
-                
-                # Get book details for the response
-                library_books = get_library_books()
-                ebooks = get_ebooks()
-                internal_materials = get_internal_materials()
-                
-                all_books = {}
-                for book in library_books + ebooks + internal_materials:
-                    all_books[book['id']] = book
-                
-                book_details = all_books.get(book_id)
-                
-                return jsonify({
-                    'status': 'success', 
-                    'message': f'Book {book_id} added to favorites and bookshelf.',
-                    'added_to_bookshelf': True,
-                    'book': book_details
-                })
-        else:
-            session['favorites'].remove(book_id)
             session.modified = True
             
-            # Update user data in JSON file
-            username = session['username']
-            users = get_users()
+            # Update user data
             if username in users:
+                # Initialize favorites array if needed
+                if 'favorites' not in users[username]:
+                    users[username]['favorites'] = []
+                
                 users[username]['favorites'] = session['favorites']
-                
-                # Also remove from my_bookshelf if present
-                if 'my_bookshelf' in users[username] and book_id in users[username]['my_bookshelf']:
-                    users[username]['my_bookshelf'].remove(book_id)
-                
                 save_users(users)
-                
+                print(f"Updated user favorites: {users[username]['favorites']}")
+            
+            # Standardize image path if needed
+            if book_details and 'img' in book_details:
+                if book_details['img'].startswith('./'):
+                    book_details['img'] = book_details['img'][2:]
+            
             return jsonify({
                 'status': 'success', 
-                'message': f'Book {book_id} removed from favorites and bookshelf.',
-                'removed_from_bookshelf': True,
+                'message': f'Book {book_id} added to favorites.',
+                'added_to_favorites': True,
+                'book': book_details
+            })
+        else:
+            # Remove from favorites - find the exact item to remove
+            print(f"Removing book {book_id} from favorites")
+            new_favorites = []
+            for fav_id in session.get('favorites', []):
+                if str(fav_id) != book_id_str:
+                    new_favorites.append(fav_id)
+            
+            session['favorites'] = new_favorites
+            session.modified = True
+            
+            # Update user data
+            if username in users:
+                users[username]['favorites'] = session['favorites']
+                save_users(users)
+                print(f"Updated user favorites after removal: {users[username]['favorites']}")
+            
+            return jsonify({
+                'status': 'success', 
+                'message': f'Book {book_id} removed from favorites.',
+                'removed_from_favorites': True,
                 'book_id': book_id
             })
 
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
+
+@app.route('/borrow_book', methods=['POST'])
+def borrow_book():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+    
+    data = request.get_json()
+    book_id = data.get('bookId')
+    
+    if not book_id:
+        return jsonify({'status': 'error', 'message': 'No book ID provided'}), 400
+    
+    username = session['username']
+    users = get_users()
+    
+    # Get book details
+    library_books = get_library_books()
+    ebooks = get_ebooks()
+    internal_materials = get_internal_materials()
+    
+    all_books = {}
+    for book in library_books + ebooks + internal_materials:
+        all_books[book['id']] = book
+    
+    book_details = all_books.get(book_id)
+    
+    if not book_details:
+        return jsonify({'status': 'error', 'message': f'Book with ID {book_id} not found'}), 404
+    
+    # Check if book is available (for physical books)
+    if book_id in [book['id'] for book in library_books]:
+        # Check availability
+        if book_details.get('availableCopies', 0) <= 0:
+            return jsonify({
+                'status': 'error', 
+                'message': f'Book {book_id} is not available for borrowing'
+            }), 400
+    
+    # Update user's borrowed books
+    if username in users:
+        if 'borrowed_books' not in users[username]:
+            users[username]['borrowed_books'] = []
+        
+        if book_id not in users[username]['borrowed_books']:
+            # Add to user's borrowed books
+            users[username]['borrowed_books'].append(book_id)
+            
+            # Calculate due date (30 days from now)
+            from datetime import datetime, timedelta
+            due_date = (datetime.now() + timedelta(days=30)).strftime('%Y-%m-%d')
+            
+            # Update available copies and set due date for physical books
+            if book_id in [book['id'] for book in library_books]:
+                for book in library_books:
+                    if book['id'] == book_id and 'availableCopies' in book:
+                        book['availableCopies'] -= 1
+                        book['dueDate'] = due_date
+                        if book['availableCopies'] <= 0:
+                            book['status'] = 'unavailable'
+                save_json(LIBRARY_BOOKS_FILE, library_books)
+            
+            save_users(users)
+            
+            # Standardize image path if needed
+            if book_details and 'img' in book_details:
+                if book_details['img'].startswith('./'):
+                    book_details['img'] = book_details['img'][2:]
+            
+            # Include due date in the response
+            return jsonify({
+                'status': 'success',
+                'message': f'Book {book_id} borrowed successfully.',
+                'borrowed': True,
+                'book': book_details,
+                'dueDate': book_details.get('dueDate')
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': f'Book {book_id} is already borrowed by you.'
+            })
+    
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
+    
+@app.route('/reserve_book', methods=['POST'])
+def reserve_book():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+    
+    data = request.get_json()
+    book_id = data.get('bookId')
+    
+    if not book_id:
+        return jsonify({'status': 'error', 'message': 'No book ID provided'}), 400
+    
+    username = session['username']
+    users = get_users()
+    
+    # Get book details
+    library_books = get_library_books()
+    ebooks = get_ebooks()
+    internal_materials = get_internal_materials()
+    
+    all_books = {}
+    for book in library_books + ebooks + internal_materials:
+        all_books[book['id']] = book
+    
+    book_details = all_books.get(book_id)
+    
+    if not book_details:
+        return jsonify({'status': 'error', 'message': f'Book with ID {book_id} not found'}), 404
+    
+    # Check if book is unavailable (for physical books)
+    if book_id in [book['id'] for book in library_books]:
+        # Check availability - we can only reserve books that are unavailable
+        if book_details.get('availableCopies', 0) > 0 and book_details.get('status') != 'unavailable':
+            return jsonify({
+                'status': 'error', 
+                'message': f'Book {book_id} is available for borrowing, no need to reserve'
+            }), 400
+    
+    # Update user's reserved books
+    if username in users:
+        # Initialize reserved_books array if it doesn't exist
+        if 'reserved_books' not in users[username]:
+            users[username]['reserved_books'] = []
+        
+        # Check if book is already reserved by the user
+        if book_id not in users[username]['reserved_books']:
+            users[username]['reserved_books'].append(book_id)
+            save_users(users)
+            
+            # Standardize image path if needed
+            if book_details and 'img' in book_details:
+                if book_details['img'].startswith('./'):
+                    book_details['img'] = book_details['img'][2:]
+            
+            return jsonify({
+                'status': 'success',
+                'message': f'Book {book_id} reserved successfully.',
+                'reserved': True,
+                'book': book_details
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': f'Book {book_id} is already reserved by you.'
+            })
+    
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
+
+@app.route('/unreserve_book', methods=['POST'])
+def unreserve_book():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+    
+    data = request.get_json()
+    book_id = data.get('bookId')
+    
+    if not book_id:
+        return jsonify({'status': 'error', 'message': 'No book ID provided'}), 400
+    
+    username = session['username']
+    users = get_users()
+    
+    # Get book details
+    library_books = get_library_books()
+    ebooks = get_ebooks()
+    internal_materials = get_internal_materials()
+    
+    all_books = {}
+    for book in library_books + ebooks + internal_materials:
+        all_books[book['id']] = book
+    
+    book_details = all_books.get(book_id)
+    
+    if not book_details:
+        return jsonify({'status': 'error', 'message': f'Book with ID {book_id} not found'}), 404
+    
+    # Update user's reserved books
+    if username in users and 'reserved_books' in users[username]:
+        # Check if book is reserved by the user
+        if book_id in users[username]['reserved_books']:
+            users[username]['reserved_books'].remove(book_id)
+            save_users(users)
+            
+            return jsonify({
+                'status': 'success',
+                'message': f'Book {book_id} reservation cancelled successfully.',
+                'reserved': False,
+                'book': book_details
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': f'Book {book_id} is not reserved by you.'
+            })
+    
+    return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
+
+@app.route('/return_book', methods=['POST'])
+def return_book():
+    if 'username' not in session:
+        return jsonify({'status': 'error', 'message': 'User not logged in'}), 401
+    
+    data = request.get_json()
+    book_id = data.get('bookId')
+    
+    if not book_id:
+        return jsonify({'status': 'error', 'message': 'No book ID provided'}), 400
+    
+    username = session['username']
+    users = get_users()
+    
+    # Update user's borrowed books
+    if username in users and 'borrowed_books' in users[username]:
+        if book_id in users[username]['borrowed_books']:
+            users[username]['borrowed_books'].remove(book_id)
+            
+            # Update available copies for physical books
+            library_books = get_library_books()
+            if book_id in [book['id'] for book in library_books]:
+                for book in library_books:
+                    if book['id'] == book_id and 'availableCopies' in book:
+                        book['availableCopies'] += 1
+                        book['status'] = 'available'
+                save_json(LIBRARY_BOOKS_FILE, library_books)
+            
+            save_users(users)
+            
+            return jsonify({
+                'status': 'success',
+                'message': f'Book {book_id} returned successfully.',
+                'book_id': book_id
+            })
+        else:
+            return jsonify({
+                'status': 'error',
+                'message': f'Book {book_id} is not borrowed by you.'
+            })
+    
     return jsonify({'status': 'error', 'message': 'Invalid request'}), 400
 
 @app.route('/profile')
