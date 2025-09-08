@@ -9,69 +9,462 @@
 <div class="profile-container">
     <aside class="profile-sidebar">
         <div class="profile-avatar">
-            <!-- Placeholder for avatar image -->
-            <img src="{{ url_for('static', filename='images/' + user.avatar) }}" alt="User Avatar">
+            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjgwIiBoZWlnaHQ9IjI4MCIgdmlld0JveD0iMCAwIDI4MCAyODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjE0MCIgY3k9IjE0MCIgcj0iMTQwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjE0MCIgeT0iMTYwIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjgwIiBmb250LXdlaWdodD0iYm9sZCI+SjwvdGV4dD4KPHN2Zz4=" alt="User Avatar">
         </div>
-        <h2>{{ user.name }}</h2>
-        <p class="username">@{{ user.username }}</p>
-        <p>{{ user.role }}</p>
-        <p>{{ user.year }}</p>
-        <p>{{ user.major }}</p>
-        <button class="edit-profile-btn">Edit profile</button>
-        <div class="profile-stats">
-            <span><i class="fas fa-users"></i> {{ user.followers }} followers</span>
-            <span>·</span>
-            <span>{{ user.following }} following</span>
+        
+        <div class="profile-info">
+            <h2 class="profile-name">John Doe</h2>
+            <p class="profile-username">@johndoe</p>
+            
+            <div class="profile-details">
+                <div class="detail-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>Computer Science Student</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Year 3</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-university"></i>
+                    <span>University of Richmond</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Richmond, VA</span>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>john.doe@richmond.edu</span>
+                </div>
+            </div>
+            
+            <button class="edit-profile-btn">
+                <i class="fas fa-edit"></i>
+                Edit profile
+            </button>
         </div>
-        <div class="rewards">
-            <h3>Rewards</h3>
-            <span><i class="fas fa-star"></i> PRO</span>
-        </div>
-        <div class="organizations">
-            <h3>Organizations</h3>
-            <span class="org-logo">UR</span>
+        
+        <div class="profile-sections">
+            <div class="section-item rewards">
+                <div class="section-header">
+                    <i class="fas fa-trophy"></i>
+                    <h3>Achievements</h3>
+                </div>
+                <div class="section-content">
+                    <div class="achievement-badge pro">
+                        <i class="fas fa-star"></i>
+                        <span>PRO Member</span>
+                    </div>
+                    <div class="achievement-badge reader">
+                        <i class="fas fa-book"></i>
+                        <span>Avid Reader</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-item organizations">
+                <div class="section-header">
+                    <i class="fas fa-building"></i>
+                    <h3>Organizations</h3>
+                </div>
+                <div class="section-content">
+                    <div class="org-item">
+                        <span class="org-logo">UR</span>
+                        <span class="org-name">University of Richmond</span>
+                    </div>
+                    <div class="org-item">
+                        <span class="org-logo cs">CS</span>
+                        <span class="org-name">Computer Science Club</span>
+                    </div>
+                </div>
+            </div>
         </div>
     </aside>
     <main class="profile-main">
         <section class="loan-list card">
             <h3>Loan List</h3>
-            <div class="loan-item">
-                <div>
-                    <p><strong>Language teaching competenc...</strong></p>
-                    <p class="author">Rossner, Richard</p>
+            <div class="loan-items-container">
+                <div class="loan-item-block">
+                    <div class="loan-content">
+                        <div class="book-main-info">
+                            <h4 class="book-title">Language teaching competence and teacher education</h4>
+                            <p class="book-author">by Rossner, Richard</p>
+                            <p class="book-isbn">ISBN: 978-0-521-42345-6</p>
+                        </div>
+                        <div class="loan-details">
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Due: 01/09/2023, 23:59</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Return to: Stanley Ho Library General Collection</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loan-actions">
+                        <button class="renew-btn"><i class="fas fa-sync-alt"></i> RENEW</button>
+                        <button class="details-btn"><i class="fas fa-info-circle"></i> DETAILS</button>
+                    </div>
                 </div>
-                <div class="loan-details">
-                    <p class="due-date">Due: 01/09/2023, 23:59</p>
-                    <p class="return-loc">Return to: Stanley Ho Library General ...</p>
+
+                <div class="loan-item-block">
+                    <div class="loan-content">
+                        <div class="book-main-info">
+                            <h4 class="book-title">Introduction to Computer Science</h4>
+                            <p class="book-author">by Smith, John A.</p>
+                            <p class="book-isbn">ISBN: 978-0-134-56789-0</p>
+                        </div>
+                        <div class="loan-details">
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Due: 15/09/2023, 23:59</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Return to: Science Library Reference Section</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loan-actions">
+                        <button class="renew-btn"><i class="fas fa-sync-alt"></i> RENEW</button>
+                        <button class="details-btn"><i class="fas fa-info-circle"></i> DETAILS</button>
+                    </div>
                 </div>
-                <button class="renew-btn"><i class="fas fa-sync-alt"></i> RENEW</button>
+
+                <div class="loan-item-block">
+                    <div class="loan-content">
+                        <div class="book-main-info">
+                            <h4 class="book-title">Advanced Mathematics for Engineers</h4>
+                            <p class="book-author">by Johnson, Emily R.</p>
+                            <p class="book-isbn">ISBN: 978-0-321-98765-4</p>
+                        </div>
+                        <div class="loan-details">
+                            <div class="detail-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Due: 22/09/2023, 23:59</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Return to: Engineering Library Main Collection</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loan-actions">
+                        <button class="renew-btn"><i class="fas fa-sync-alt"></i> RENEW</button>
+                        <button class="details-btn"><i class="fas fa-info-circle"></i> DETAILS</button>
+                    </div>
+                </div>
             </div>
         </section>
 
+        <section class="resources-allocated card">
+            <h3>Resources Allocated</h3>
+            <div class="resources-grid">
+                <div class="resource-item" data-resource="printing">
+                    <div class="resource-chart" data-percentage="75">
+                        <svg class="progress-ring" width="100" height="100">
+                            <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-ring-circle" cx="50" cy="50" r="40" data-color="#e91e63"></circle>
+                        </svg>
+                        <div class="resource-icon">
+                            <i class="fas fa-print"></i>
+                        </div>
+                    </div>
+                    <div class="resource-label">Printing Quota</div>
+                </div>
+                
+                <div class="resource-item" data-resource="studyroom">
+                    <div class="resource-chart" data-percentage="45">
+                        <svg class="progress-ring" width="100" height="100">
+                            <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-ring-circle" cx="50" cy="50" r="40" data-color="#9e9e9e"></circle>
+                        </svg>
+                        <div class="resource-icon">
+                            <i class="fas fa-door-open"></i>
+                        </div>
+                    </div>
+                    <div class="resource-label">Study Room Hours</div>
+                </div>
+                
+                <div class="resource-item" data-resource="devices">
+                    <div class="resource-chart" data-percentage="90">
+                        <svg class="progress-ring" width="100" height="100">
+                            <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-ring-circle" cx="50" cy="50" r="40" data-color="#4caf50"></circle>
+                        </svg>
+                        <div class="resource-icon">
+                            <i class="fas fa-laptop"></i>
+                        </div>
+                    </div>
+                    <div class="resource-label">Device Lending</div>
+                </div>
+                
+                <div class="resource-item" data-resource="workshops">
+                    <div class="resource-chart" data-percentage="25">
+                        <svg class="progress-ring" width="100" height="100">
+                            <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40"></circle>
+                            <circle class="progress-ring-circle" cx="50" cy="50" r="40" data-color="#ff5722"></circle>
+                        </svg>
+                        <div class="resource-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="resource-label">Workshop Bookings</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Resource Detail Modal -->
+        <div id="resourceModal" class="resource-modal">
+            <div class="resource-modal-content">
+                <span class="resource-modal-close">&times;</span>
+                <h3 id="resourceModalTitle">Resource Details</h3>
+                <div id="resourceModalBody">
+                    <!-- Content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tooltip -->
+        <div id="resourceTooltip" class="resource-tooltip"></div>
+
         <section class="booking-activity card">
-            <h3>1 booking in the last year</h3>
+            <div class="activity-header">
+                <h3>127 reading activities in the last year</h3>
+                <div class="activity-summary">
+                    <span class="total-books">45 books completed</span>
+                    <span class="reading-streak">Current streak: 12 days</span>
+                </div>
+            </div>
+            
             <div class="contribution-graph">
-                <!-- Contribution graph placeholder -->
-                <p style="text-align: center; padding: 20px; color: #666;">Contribution graph would be generated here.</p>
+                <div class="contribution-header">
+                    <span class="contribution-text">Learn how we count contributions</span>
+                    <div class="contribution-legend">
+                        <span class="legend-text">Less</span>
+                        <div class="legend-squares">
+                            <div class="legend-square level-0"></div>
+                            <div class="legend-square level-1"></div>
+                            <div class="legend-square level-2"></div>
+                            <div class="legend-square level-3"></div>
+                            <div class="legend-square level-4"></div>
+                        </div>
+                        <span class="legend-text">More</span>
+                    </div>
+                </div>
+                
+                <div class="contribution-calendar">
+                    <div class="month-labels">
+                        <span>Jan</span>
+                        <span>Feb</span>
+                        <span>Mar</span>
+                        <span>Apr</span>
+                        <span>May</span>
+                        <span>Jun</span>
+                        <span>Jul</span>
+                        <span>Aug</span>
+                        <span>Sep</span>
+                        <span>Oct</span>
+                        <span>Nov</span>
+                        <span>Dec</span>
+                    </div>
+                    
+                    <div class="calendar-grid">
+                        <div class="day-labels">
+                            <span>Mon</span>
+                            <span>Wed</span>
+                            <span>Fri</span>
+                        </div>
+                        <div class="contribution-grid" id="contributionGrid">
+                            <!-- Grid will be generated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section class="upcoming-activity card">
-            <h3>Upcoming activity</h3>
-            <p>September 2025</p>
-            <div class="activity-item">
-                <div class="activity-date">
-                    <span class="day">10</span>
-                    <span class="month">Sep</span>
+            <h3>Upcoming Activities</h3>
+            
+            <div class="activities-container">
+                <div class="activity-block">
+                    <div class="activity-date-block">
+                        <span class="day-number">10</span>
+                        <span class="month-abbr">Sep</span>
+                    </div>
+                    <div class="activity-content">
+                        <h4 class="activity-title">Introduction of 3D printer</h4>
+                        <div class="activity-info">
+                            <div class="info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Venue: Yeung B7510</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-user"></i>
+                                <span>Instructor: Prof. Howard Leung</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-clock"></i>
+                                <span>Time: 2:00 PM - 4:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="activity-details">
-                    <p><strong>Introduction of 3D printer</strong></p>
-                    <p>Venue: Yeung B7510</p>
-                    <p>Instructor: Prof. Howard Leung</p>
+
+                <div class="activity-block">
+                    <div class="activity-date-block">
+                        <span class="day-number">15</span>
+                        <span class="month-abbr">Sep</span>
+                    </div>
+                    <div class="activity-content">
+                        <h4 class="activity-title">Advanced Programming Workshop</h4>
+                        <div class="activity-info">
+                            <div class="info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Venue: Computer Lab A301</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-user"></i>
+                                <span>Instructor: Dr. Sarah Chen</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-clock"></i>
+                                <span>Time: 10:00 AM - 12:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-block">
+                    <div class="activity-date-block">
+                        <span class="day-number">22</span>
+                        <span class="month-abbr">Sep</span>
+                    </div>
+                    <div class="activity-content">
+                        <h4 class="activity-title">Research Methodology Seminar</h4>
+                        <div class="activity-info">
+                            <div class="info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Venue: Main Auditorium</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-user"></i>
+                                <span>Instructor: Prof. Michael Davis</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-clock"></i>
+                                <span>Time: 3:00 PM - 5:00 PM</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-block">
+                    <div class="activity-date-block">
+                        <span class="day-number">28</span>
+                        <span class="month-abbr">Sep</span>
+                    </div>
+                    <div class="activity-content">
+                        <h4 class="activity-title">Library Orientation Session</h4>
+                        <div class="activity-info">
+                            <div class="info-row">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Venue: Stanley Ho Library</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-user"></i>
+                                <span>Instructor: Library Staff</span>
+                            </div>
+                            <div class="info-row">
+                                <i class="fas fa-clock"></i>
+                                <span>Time: 1:00 PM - 2:30 PM</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <button class="show-more-btn">Show more activity</button>
+            
+            <button class="show-more-btn">
+                <i class="fas fa-chevron-down"></i>
+                Show more activities
+            </button>
+        </section>
+
+        <section class="intranet-apps card">
+            <h3>My Intranet App</h3>
+            <div class="intranet-grid">
+                <div class="intranet-app-item">
+                    <div class="app-icon aims">
+                        <span>AIMS</span>
+                    </div>
+                    <div class="app-name">AIMS</div>
+                    <div class="app-menu">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+                
+                <div class="intranet-app-item">
+                    <div class="app-icon canvas">
+                        <i class="fas fa-palette"></i>
+                        <span>canvas</span>
+                    </div>
+                    <div class="app-name">Canvas</div>
+                    <div class="app-menu">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+                
+                <div class="intranet-app-item">
+                    <div class="app-icon profile">
+                        <i class="fas fa-user-cog"></i>
+                    </div>
+                    <div class="app-name">My CityU Profile</div>
+                    <div class="app-menu">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="third-party-apps card">
+            <h3>3 Party Applications</h3>
+            <div class="third-party-list">
+                <div class="third-party-app-item">
+                    <div class="app-info">
+                        <div class="app-icon-large grammarly">
+                            <i class="fas fa-spell-check"></i>
+                        </div>
+                        <div class="app-details">
+                            <h4>grammarly</h4>
+                            <p>Writing assistant for students</p>
+                        </div>
+                    </div>
+                    <button class="app-action-btn apply">Apply</button>
+                </div>
+                
+                <div class="third-party-app-item">
+                    <div class="app-info">
+                        <div class="app-icon-large gmail">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <div class="app-details">
+                            <h4>Gmail</h4>
+                            <p>University email access</p>
+                        </div>
+                    </div>
+                    <button class="app-action-btn achieved">
+                        <i class="fas fa-check"></i>
+                        Achieve
+                    </button>
+                </div>
+            </div>
         </section>
     </main>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='profile.js') }}"></script>
 {% endblock %}

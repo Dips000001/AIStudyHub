@@ -1,0 +1,448 @@
+{% extends "layout.html" %}
+{% block title %}Settings{% endblock %}
+{% block styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='settings.css') }}">
+{% endblock %}
+{% block content %}
+
+<!-- Settings Header -->
+<section class="settings-header">
+    <div class="header-content">
+        <h2>Account Settings</h2>
+        <p>Manage your account preferences and personal information</p>
+    </div>
+</section>
+
+<!-- Settings Grid -->
+<div class="settings-grid">
+    <!-- Left Column - Navigation -->
+    <div class="settings-nav">
+        <div class="nav-section">
+            <h3>Settings</h3>
+            <ul class="settings-nav-list">
+                <li><a href="#profile" class="nav-item active" onclick="showSection('profile')">
+                    <i class="fas fa-user"></i> Profile Information
+                </a></li>
+                <li><a href="#account" class="nav-item" onclick="showSection('account')">
+                    <i class="fas fa-cog"></i> Account Settings
+                </a></li>
+                <li><a href="#preferences" class="nav-item" onclick="showSection('preferences')">
+                    <i class="fas fa-sliders-h"></i> Preferences
+                </a></li>
+                <li><a href="#notifications" class="nav-item" onclick="showSection('notifications')">
+                    <i class="fas fa-bell"></i> Notifications
+                </a></li>
+                <li><a href="#privacy" class="nav-item" onclick="showSection('privacy')">
+                    <i class="fas fa-shield-alt"></i> Privacy & Security
+                </a></li>
+                <li><a href="#data" class="nav-item" onclick="showSection('data')">
+                    <i class="fas fa-download"></i> Data & Export
+                </a></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Right Column - Content -->
+    <div class="settings-content">
+        <!-- Profile Information Section -->
+        <div id="profile-section" class="settings-section active">
+            <div class="section-header">
+                <h3>Profile Information</h3>
+                <p>Update your personal details and profile picture</p>
+            </div>
+            
+            <form class="settings-form" id="profileForm">
+                <div class="form-group">
+                    <label for="profilePicture">Profile Picture</label>
+                    <div class="profile-picture-upload">
+                        <div class="current-picture">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxjaXJjbGUgY3g9IjUwIiBjeT0iNTAiIHI9IjUwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI1NSIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzMCI+VTwvdGV4dD4KPHN2Zz4=" alt="Profile Picture" id="profileImg">
+                        </div>
+                        <div class="upload-controls">
+                            <input type="file" id="profilePicture" accept="image/*" style="display: none;">
+                            <button type="button" class="btn-secondary" onclick="document.getElementById('profilePicture').click()">
+                                <i class="fas fa-camera"></i> Change Picture
+                            </button>
+                            <button type="button" class="btn-danger-outline" onclick="removeProfilePicture()">
+                                <i class="fas fa-trash"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input type="text" id="firstName" name="firstName" value="{{ session.username or 'John' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" value="Doe" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" name="email" value="john.doe@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" value="+1 (555) 123-4567">
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Bio</label>
+                    <textarea id="bio" name="bio" rows="4" placeholder="Tell us about yourself...">Passionate reader and lifelong learner. Currently pursuing computer science with a focus on AI and machine learning.</textarea>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Save Changes
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="resetForm('profileForm')">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Account Settings Section -->
+        <div id="account-section" class="settings-section">
+            <div class="section-header">
+                <h3>Account Settings</h3>
+                <p>Manage your account security and login preferences</p>
+            </div>
+
+            <!-- Change Password -->
+            <div class="settings-card">
+                <h4>Change Password</h4>
+                <form class="settings-form" id="passwordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" name="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" name="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-key"></i> Update Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Two-Factor Authentication -->
+            <div class="settings-card">
+                <h4>Two-Factor Authentication</h4>
+                <p>Add an extra layer of security to your account</p>
+                <div class="toggle-setting">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="twoFactorAuth">
+                        <span class="slider"></span>
+                    </label>
+                    <div class="toggle-info">
+                        <span class="toggle-label">Enable 2FA</span>
+                        <span class="toggle-description">Secure your account with SMS or authenticator app</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Delete Account -->
+            <div class="settings-card danger-zone">
+                <h4>Danger Zone</h4>
+                <p>Once you delete your account, there is no going back. Please be certain.</p>
+                <button type="button" class="btn-danger" onclick="showDeleteAccountModal()">
+                    <i class="fas fa-trash-alt"></i> Delete Account
+                </button>
+            </div>
+        </div>
+
+        <!-- Preferences Section -->
+        <div id="preferences-section" class="settings-section">
+            <div class="section-header">
+                <h3>Preferences</h3>
+                <p>Customize your experience and interface settings</p>
+            </div>
+
+            <div class="settings-card">
+                <h4>Display Settings</h4>
+                <div class="preference-group">
+                    <div class="preference-item">
+                        <label for="theme">Theme</label>
+                        <select id="theme" name="theme">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                            <option value="auto">Auto (System)</option>
+                        </select>
+                    </div>
+                    <div class="preference-item">
+                        <label for="language">Language</label>
+                        <select id="language" name="language">
+                            <option value="en">English</option>
+                            <option value="es">Español</option>
+                            <option value="fr">Français</option>
+                            <option value="de">Deutsch</option>
+                            <option value="zh">中文</option>
+                        </select>
+                    </div>
+                    <div class="preference-item">
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone" name="timezone">
+                            <option value="UTC">UTC</option>
+                            <option value="EST">Eastern Time</option>
+                            <option value="PST">Pacific Time</option>
+                            <option value="GMT">Greenwich Mean Time</option>
+                            <option value="JST">Japan Standard Time</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h4>Reading Preferences</h4>
+                <div class="preference-group">
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoBookmark" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Auto-bookmark</span>
+                            <span class="toggle-description">Automatically save your reading progress</span>
+                        </div>
+                    </div>
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="readingReminders" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Reading Reminders</span>
+                            <span class="toggle-description">Get daily reminders to continue reading</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notifications Section -->
+        <div id="notifications-section" class="settings-section">
+            <div class="section-header">
+                <h3>Notifications</h3>
+                <p>Choose what notifications you want to receive</p>
+            </div>
+
+            <div class="settings-card">
+                <h4>Email Notifications</h4>
+                <div class="notification-group">
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailNewBooks" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">New Book Recommendations</span>
+                            <span class="toggle-description">Get notified when new books match your interests</span>
+                        </div>
+                    </div>
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailReminders" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Reading Reminders</span>
+                            <span class="toggle-description">Daily and weekly reading goal reminders</span>
+                        </div>
+                    </div>
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="emailUpdates">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Product Updates</span>
+                            <span class="toggle-description">News about new features and improvements</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h4>Push Notifications</h4>
+                <div class="notification-group">
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pushReminders" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Reading Reminders</span>
+                            <span class="toggle-description">Push notifications for reading goals</span>
+                        </div>
+                    </div>
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="pushEvents" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Upcoming Events</span>
+                            <span class="toggle-description">Notifications for book club meetings and workshops</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Privacy & Security Section -->
+        <div id="privacy-section" class="settings-section">
+            <div class="section-header">
+                <h3>Privacy & Security</h3>
+                <p>Control your privacy settings and data sharing preferences</p>
+            </div>
+
+            <div class="settings-card">
+                <h4>Privacy Settings</h4>
+                <div class="privacy-group">
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="profileVisibility" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Public Profile</span>
+                            <span class="toggle-description">Allow others to see your reading activity</span>
+                        </div>
+                    </div>
+                    <div class="toggle-setting">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="dataAnalytics" checked>
+                            <span class="slider"></span>
+                        </label>
+                        <div class="toggle-info">
+                            <span class="toggle-label">Usage Analytics</span>
+                            <span class="toggle-description">Help improve the app by sharing usage data</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h4>Active Sessions</h4>
+                <p>Manage your active login sessions across devices</p>
+                <div class="session-list">
+                    <div class="session-item">
+                        <div class="session-info">
+                            <i class="fas fa-desktop"></i>
+                            <div class="session-details">
+                                <span class="device-name">Windows PC - Chrome</span>
+                                <span class="session-time">Current session • Last active now</span>
+                            </div>
+                        </div>
+                        <span class="session-status current">Current</span>
+                    </div>
+                    <div class="session-item">
+                        <div class="session-info">
+                            <i class="fas fa-mobile-alt"></i>
+                            <div class="session-details">
+                                <span class="device-name">iPhone - Safari</span>
+                                <span class="session-time">Last active 2 hours ago</span>
+                            </div>
+                        </div>
+                        <button class="btn-danger-outline btn-sm" onclick="revokeSession('mobile')">Revoke</button>
+                    </div>
+                </div>
+                <button type="button" class="btn-secondary mt-3" onclick="revokeAllSessions()">
+                    <i class="fas fa-sign-out-alt"></i> Sign out of all other sessions
+                </button>
+            </div>
+        </div>
+
+        <!-- Data & Export Section -->
+        <div id="data-section" class="settings-section">
+            <div class="section-header">
+                <h3>Data & Export</h3>
+                <p>Download your data or manage your account information</p>
+            </div>
+
+            <div class="settings-card">
+                <h4>Export Your Data</h4>
+                <p>Download a copy of your reading history, bookmarks, and preferences</p>
+                <div class="export-options">
+                    <button type="button" class="btn-primary" onclick="exportData('reading-history')">
+                        <i class="fas fa-download"></i> Export Reading History
+                    </button>
+                    <button type="button" class="btn-primary" onclick="exportData('bookmarks')">
+                        <i class="fas fa-download"></i> Export Bookmarks
+                    </button>
+                    <button type="button" class="btn-primary" onclick="exportData('all-data')">
+                        <i class="fas fa-download"></i> Export All Data
+                    </button>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <h4>Account Statistics</h4>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-number">127</span>
+                        <span class="stat-label">Books Read</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">45</span>
+                        <span class="stat-label">Bookmarks</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">2.3GB</span>
+                        <span class="stat-label">Data Used</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">18 months</span>
+                        <span class="stat-label">Member Since</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div id="deleteAccountModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Delete Account</h3>
+            <button class="modal-close" onclick="closeDeleteAccountModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <p><strong>Are you sure you want to delete your account?</strong></p>
+            <p>This action cannot be undone. All your data, including reading history, bookmarks, and preferences will be permanently deleted.</p>
+            <div class="form-group">
+                <label for="deleteConfirmation">Type "DELETE" to confirm:</label>
+                <input type="text" id="deleteConfirmation" placeholder="DELETE">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-secondary" onclick="closeDeleteAccountModal()">Cancel</button>
+            <button type="button" class="btn-danger" id="confirmDeleteBtn" onclick="confirmDeleteAccount()" disabled>
+                <i class="fas fa-trash-alt"></i> Delete Account
+            </button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='settings.js') }}"></script>
+{% endblock %}

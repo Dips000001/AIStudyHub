@@ -883,6 +883,13 @@ def profile():
         
     return render_template('profile.html', user=user_data)
 
+@app.route('/settings')
+def settings():
+    if 'username' not in session:
+        return redirect(url_for('index'))
+    return render_template('settings.html')
+
+
 # Booking API Routes
 @app.route('/api/book-resource', methods=['POST'])
 def book_resource():
