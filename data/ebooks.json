@@ -1,5 +1,7 @@
 [
-  {"id": 1, "title": "The Bully", "img": "./img/library/001.png", "link": "#"},
-  {"id": 2, "title": "Destination Germany", "img": "book2.jpg", "link": "#"},
-  {"id": 6, "title": "Digital Marketing", "img": "ebook1.jpg", "link": "#"}
+  {"id": 1, "title": "Introduction to Computer Science", "img": "./img/library/001.png", "link": "#", "subject": "Computer Science", "level": "Beginner"},
+  {"id": 2, "title": "Advanced Programming Concepts", "img": "book2.jpg", "link": "#", "subject": "Computer Science", "level": "Advanced"},
+  {"id": 6, "title": "Digital Marketing for Tech Professionals", "img": "ebook1.jpg", "link": "#", "subject": "Business", "level": "Intermediate"},
+  {"id": 12, "title": "Calculus for Computer Scientists", "img": "ebook2.jpg", "link": "#", "subject": "Mathematics", "level": "Intermediate"},
+  {"id": 13, "title": "Statistics and Probability", "img": "ebook3.jpg", "link": "#", "subject": "Mathematics", "level": "Intermediate"}
 ]

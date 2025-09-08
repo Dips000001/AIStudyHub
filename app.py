@@ -135,7 +135,108 @@ def booking():
 def recommendations():
     if 'username' not in session:
         return redirect(url_for('index'))
-    return render_template('recommendations.html')
+    
+    username = session['username']
+    users = get_users()
+    current_user = users.get(username, {})
+    
+    # Get all books
+    library_books = get_library_books()
+    ebooks = get_ebooks()
+    internal_materials = get_internal_materials()
+    all_books = library_books + ebooks + internal_materials
+    
+    # Create book lookup dictionary
+    book_lookup = {book['id']: book for book in all_books}
+    
+    # Generate Top 10 recommendations for same major/cohort
+    user_major = current_user.get('major', '')
+    user_year = current_user.get('year', '')
+    
+    # Find users with same major and year
+    same_cohort_users = []
+    for user_id, user_data in users.items():
+        if (user_data.get('major') == user_major and 
+            user_data.get('year') == user_year and 
+            user_id != username):
+            same_cohort_users.append(user_data)
+    
+    # Get popular books among cohort (simulate with sample data)
+    top_10_books = [
+        {'id': 5, 'title': 'Python Programming', 'img': 'book5.jpg', 'rank': 1},
+        {'id': 6, 'title': 'Digital Marketing', 'img': 'ebook1.jpg', 'rank': 2},
+        {'id': 3, 'title': 'Utah', 'img': 'book3.jpg', 'rank': 3},
+        {'id': 7, 'title': 'Course Notes', 'img': 'notes.jpg', 'rank': 4},
+        {'id': 4, 'title': 'American History', 'img': 'book4.jpg', 'rank': 5},
+        {'id': 8, 'title': 'Lab Instructions', 'img': 'lab.jpg', 'rank': 6},
+        {'id': 1, 'title': 'The Bully', 'img': './img/library/001.png', 'rank': 7},
+        {'id': 2, 'title': 'Destination Germany', 'img': 'book2.jpg', 'rank': 8},
+    ]
+    
+    # Generate personalized suggestions based on GPA/performance
+    user_gpa = current_user.get('gpa', 3.5)  # Default GPA
+    personalized_books = []
+    
+    if user_gpa >= 3.7:  # High performers
+        personalized_books = [
+            {'id': 5, 'title': 'Advanced Python Programming', 'reason': 'Perfect for high achievers in Computer Science'},
+            {'id': 6, 'title': 'Digital Marketing Strategy', 'reason': 'Expand your skill set with marketing knowledge'},
+            {'id': 7, 'title': 'Research Methodology', 'reason': 'Prepare for advanced research projects'}
+        ]
+    elif user_gpa >= 3.0:  # Average performers
+        personalized_books = [
+            {'id': 5, 'title': 'Python Programming Basics', 'reason': 'Strengthen your programming fundamentals'},
+            {'id': 8, 'title': 'Study Skills Guide', 'reason': 'Improve your academic performance'},
+            {'id': 4, 'title': 'Course Review Materials', 'reason': 'Review key concepts for your courses'}
+        ]
+    else:  # Need support
+        personalized_books = [
+            {'id': 7, 'title': 'Study Techniques', 'reason': 'Essential study methods for academic success'},
+            {'id': 8, 'title': 'Time Management', 'reason': 'Organize your schedule effectively'},
+            {'id': 5, 'title': 'Programming Fundamentals', 'reason': 'Build strong foundation in programming'}
+        ]
+    
+    # Course-based recommendations (simulate registered courses)
+    registered_courses = ['CS101', 'CS201', 'MATH150']  # Sample courses
+    course_books = [
+        {'id': 5, 'title': 'Python Programming', 'course': 'CS101', 'reason': 'Required reading for CS101'},
+        {'id': 7, 'title': 'Algorithm Design', 'course': 'CS201', 'reason': 'Supplementary material for CS201'},
+        {'id': 4, 'title': 'Discrete Mathematics', 'course': 'MATH150', 'reason': 'Essential for MATH150'}
+    ]
+    
+    # Latest events and promotions
+    events = [
+        {
+            'title': 'Tech Career Fair 2025',
+            'date': 'March 15, 2025',
+            'description': 'Connect with top tech companies and explore internship opportunities',
+            'image': 'event1.jpg',
+            'link': '#'
+        },
+        {
+            'title': 'Study Group Formation',
+            'date': 'Ongoing',
+            'description': 'Join study groups for your courses and improve together',
+            'image': 'event2.jpg',
+            'link': '#'
+        },
+        {
+            'title': 'Library Workshop Series',
+            'date': 'Every Friday',
+            'description': 'Learn advanced research techniques and database usage',
+            'image': 'event3.jpg',
+            'link': '#'
+        }
+    ]
+    
+    return render_template('recommendations.html', 
+                         user=current_user,
+                         top_10_books=top_10_books,
+                         personalized_books=personalized_books,
+                         course_books=course_books,
+                         events=events,
+                         user_major=user_major,
+                         user_year=user_year)
 
 @app.route('/library')
 def library():

@@ -1,4 +1,7 @@
 [
-  {"id": 7, "title": "Course Notes", "img": "notes.jpg", "link": "#"},
-  {"id": 8, "title": "Lab Instructions", "img": "lab.jpg", "link": "#"}
+  {"id": 7, "title": "CS101 Course Notes", "img": "notes.jpg", "link": "#", "course": "CS101", "subject": "Computer Science"},
+  {"id": 8, "title": "Programming Lab Instructions", "img": "lab.jpg", "link": "#", "course": "CS101", "subject": "Computer Science"},
+  {"id": 14, "title": "CS201 Algorithm Study Guide", "img": "study_guide.jpg", "link": "#", "course": "CS201", "subject": "Computer Science"},
+  {"id": 15, "title": "MATH150 Formula Sheet", "img": "formula.jpg", "link": "#", "course": "MATH150", "subject": "Mathematics"},
+  {"id": 16, "title": "Final Exam Preparation Materials", "img": "exam_prep.jpg", "link": "#", "course": "General", "subject": "Study Skills"}
 ]

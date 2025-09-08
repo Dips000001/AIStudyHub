@@ -2,12 +2,14 @@
   "alex": {
     "password": "password",
     "favorites": [
-      1,
-      2
+      2,
+      3,
+      6
     ],
     "my_bookshelf": [
       1,
-      2
+      2,
+      6
     ],
     "name": "Alex Smith",
     "username": "alex",
@@ -16,6 +18,68 @@
     "major": "Bachelor of Computer Science",
     "followers": 2,
     "following": 4,
-    "avatar": "profile_avatar.png"
+    "avatar": "profile_avatar.png",
+    "gpa": 3.8,
+    "registered_courses": [
+      "CS101",
+      "CS201",
+      "MATH150"
+    ],
+    "cohort_position": "Top 15%"
+  },
+  "john": {
+    "password": "password123",
+    "favorites": [
+      3,
+      5
+    ],
+    "my_bookshelf": [
+      3,
+      5,
+      7
+    ],
+    "name": "John Doe",
+    "username": "john",
+    "role": "Student",
+    "year": "Year2",
+    "major": "Bachelor of Computer Science",
+    "followers": 1,
+    "following": 3,
+    "avatar": "profile_avatar.png",
+    "gpa": 3.2,
+    "registered_courses": [
+      "CS101",
+      "CS150",
+      "ENG101"
+    ],
+    "cohort_position": "Top 45%"
+  },
+  "sarah": {
+    "password": "password456",
+    "favorites": [
+      4,
+      6,
+      8
+    ],
+    "my_bookshelf": [
+      4,
+      6,
+      8
+    ],
+    "name": "Sarah Johnson",
+    "username": "sarah",
+    "role": "Student",
+    "year": "Year2",
+    "major": "Bachelor of Computer Science",
+    "followers": 5,
+    "following": 7,
+    "avatar": "profile_avatar.png",
+    "gpa": 3.9,
+    "registered_courses": [
+      "CS201",
+      "CS301",
+      "MATH200"
+    ],
+    "cohort_position": "Top 5%"
   }
 }

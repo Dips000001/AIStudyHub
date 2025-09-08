@@ -1,5 +1,8 @@
 [
-  {"id": 3, "title": "Utah", "img": "book3.jpg", "link": "#"},
-  {"id": 4, "title": "American History", "img": "book4.jpg", "link": "#"},
-  {"id": 5, "title": "Python Programming", "img": "book5.jpg", "link": "#"}
+  {"id": 3, "title": "Data Structures and Algorithms", "img": "book3.jpg", "link": "#", "subject": "Computer Science", "level": "Intermediate"},
+  {"id": 4, "title": "Database Systems Concepts", "img": "book4.jpg", "link": "#", "subject": "Computer Science", "level": "Advanced"},
+  {"id": 5, "title": "Python Programming for Beginners", "img": "book5.jpg", "link": "#", "subject": "Computer Science", "level": "Beginner"},
+  {"id": 9, "title": "Software Engineering Principles", "img": "book9.jpg", "link": "#", "subject": "Computer Science", "level": "Intermediate"},
+  {"id": 10, "title": "Machine Learning Fundamentals", "img": "book10.jpg", "link": "#", "subject": "Computer Science", "level": "Advanced"},
+  {"id": 11, "title": "Web Development with JavaScript", "img": "book11.jpg", "link": "#", "subject": "Computer Science", "level": "Intermediate"}
 ]
