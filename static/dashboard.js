@@ -2,9 +2,86 @@
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 
+// Sample user registered events data
+const userEvents = [
+    {
+        id: 1,
+        title: "3D Printer Workshop",
+        date: "2025-09-10",
+        startTime: "2:00 PM",
+        endTime: "4:00 PM",
+        venue: "Yeung B7510",
+        type: "workshop"
+    },
+    {
+        id: 2,
+        title: "Advanced Programming Workshop",
+        date: "2025-09-15",
+        startTime: "10:00 AM",
+        endTime: "12:00 PM",
+        venue: "Computer Lab A301",
+        type: "workshop"
+    },
+    {
+        id: 3,
+        title: "Research Methodology Seminar",
+        date: "2025-09-22",
+        startTime: "3:00 PM",
+        endTime: "5:00 PM",
+        venue: "Main Auditorium",
+        type: "seminar"
+    },
+    {
+        id: 4,
+        title: "Library Orientation Session",
+        date: "2025-09-28",
+        startTime: "1:00 PM",
+        endTime: "2:30 PM",
+        venue: "Stanley Ho Library",
+        type: "orientation"
+    },
+    {
+        id: 5,
+        title: "Book Club Meeting",
+        date: "2025-09-12",
+        startTime: "7:00 PM",
+        endTime: "8:30 PM",
+        venue: "Student Center Room 201",
+        type: "club"
+    },
+    {
+        id: 6,
+        title: "Statistics Study Group",
+        date: "2025-09-18",
+        startTime: "4:00 PM",
+        endTime: "6:00 PM",
+        venue: "Library Study Room 3",
+        type: "study"
+    },
+    {
+        id: 7,
+        title: "Career Fair",
+        date: "2025-09-25",
+        startTime: "9:00 AM",
+        endTime: "4:00 PM",
+        venue: "University Sports Hall",
+        type: "career"
+    },
+    {
+        id: 8,
+        title: "Python Coding Bootcamp",
+        date: "2025-10-02",
+        startTime: "1:00 PM",
+        endTime: "5:00 PM",
+        venue: "Computer Lab B205",
+        type: "workshop"
+    }
+];
+
 // Calendar functionality
 function initializeCalendar() {
     generateCalendar(currentMonth, currentYear);
+    generateUpcomingEvents();
 }
 
 function generateCalendar(month, year) {
@@ -28,6 +105,9 @@ function generateCalendar(month, year) {
     // Re-add headers
     headers.forEach(header => calendarGrid.appendChild(header));
     
+    // Get events for current month
+    const currentMonthEvents = getEventsForMonth(month, year);
+    
     // Add empty cells for days before the first day of the month
     for (let i = 0; i < firstDay; i++) {
         const emptyDay = document.createElement('div');
@@ -46,26 +126,81 @@ function generateCalendar(month, year) {
             dayElement.classList.add('today');
         }
         
-        // Mark days with events
-        if (hasEvent(year, month, day)) {
+        // Check if this day has events and highlight it
+        const dayDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dayEvents = userEvents.filter(event => event.date === dayDate);
+        
+        if (dayEvents.length > 0) {
             dayElement.classList.add('has-event');
+            dayElement.title = `${dayEvents.length} event${dayEvents.length > 1 ? 's' : ''}: ${dayEvents.map(e => e.title).join(', ')}`;
         }
         
         calendarGrid.appendChild(dayElement);
     }
 }
 
-function hasEvent(year, month, day) {
-    // Sample events - in a real app, this would come from a database
-    const events = [
-        { year: 2024, month: 0, day: 15 }, // January 15
-        { year: 2024, month: 0, day: 18 }, // January 18
-        { year: 2024, month: 0, day: 22 }  // January 22
-    ];
+function getEventsForMonth(month, year) {
+    const monthStr = String(month + 1).padStart(2, '0');
+    const yearStr = String(year);
     
-    return events.some(event => 
-        event.year === year && event.month === month && event.day === day
-    );
+    return userEvents.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate.getFullYear() === year && eventDate.getMonth() === month;
+    });
+}
+
+function hasEvent(year, month, day) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return userEvents.some(event => event.date === dateStr);
+}
+
+function generateUpcomingEvents() {
+    const today = new Date();
+    const fifteenDaysFromNow = new Date();
+    fifteenDaysFromNow.setDate(today.getDate() + 15);
+    
+    // Filter events within next 15 days
+    const upcomingEvents = userEvents.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate >= today && eventDate <= fifteenDaysFromNow;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    // Update the upcoming events display
+    const eventList = document.querySelector('.event-list');
+    if (eventList) {
+        eventList.innerHTML = '';
+        
+        if (upcomingEvents.length === 0) {
+            eventList.innerHTML = '<div class="no-events">No upcoming events in the next 15 days</div>';
+            return;
+        }
+        
+        upcomingEvents.forEach(event => {
+            const eventDate = new Date(event.date);
+            const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                              'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            
+            const eventItem = document.createElement('div');
+            eventItem.className = 'event-item';
+            eventItem.innerHTML = `
+                <div class="event-date">${monthNames[eventDate.getMonth()]} ${eventDate.getDate()}</div>
+                <div class="event-details">
+                    <span class="event-title">${event.title}</span>
+                    <div class="event-info">
+                        <div class="event-time-info">
+                            <i class="fas fa-clock"></i>
+                            <span>${event.startTime} - ${event.endTime}</span>
+                        </div>
+                        <div class="event-venue-info">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${event.venue}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            eventList.appendChild(eventItem);
+        });
+    }
 }
 
 function previousMonth() {
@@ -75,6 +210,7 @@ function previousMonth() {
         currentYear--;
     }
     generateCalendar(currentMonth, currentYear);
+    generateUpcomingEvents();
 }
 
 function nextMonth() {
@@ -84,6 +220,7 @@ function nextMonth() {
         currentYear++;
     }
     generateCalendar(currentMonth, currentYear);
+    generateUpcomingEvents();
 }
 
 // Continue reading functionality
@@ -173,3 +310,61 @@ function initializeCharts() {
         });
     }
 }
+
+// Book Modal Functions
+function showBookDetails() {
+    const modal = document.getElementById('bookModal');
+    modal.style.display = 'block';
+    
+    // Add event listener for close button
+    const closeBtn = document.querySelector('.book-modal-close');
+    if (closeBtn) {
+        closeBtn.onclick = closeBookModal;
+    }
+    
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            closeBookModal();
+        }
+    }
+    
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+}
+
+function closeBookModal() {
+    const modal = document.getElementById('bookModal');
+    modal.style.display = 'none';
+    
+    // Restore body scroll
+    document.body.style.overflow = 'auto';
+    
+    // Remove window click listener
+    window.onclick = null;
+}
+
+function continueReading() {
+    // Close modal first
+    closeBookModal();
+    
+    // Simulate navigation to reading page
+    // In a real application, this would navigate to the actual reading interface
+    alert('Continuing reading "Statistics" by Gordon and Finch...This would normally open the book reader interface.');
+    
+    // You could replace the alert with actual navigation:
+    // window.location.href = '/read/statistics-gordon-finch';
+}
+
+// Initialize modal functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Add keyboard support for modal
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const modal = document.getElementById('bookModal');
+            if (modal && modal.style.display === 'block') {
+                closeBookModal();
+            }
+        }
+    });
+});

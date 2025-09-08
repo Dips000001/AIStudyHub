@@ -4,7 +4,7 @@
 <!-- Keep Going Banner -->
 <section class="keep-going-banner">
     <div class="banner-content">
-        <h2>Keep Going!</h2>
+        <h2>Welcome back, Alice</h2>
         <p>Success is the sum of small efforts repeated day in and day out. You're doing amazing!</p>
     </div>
 </section>
@@ -63,7 +63,7 @@
         <!-- Continue Your Last Reading -->
         <section class="card last-reading">
             <h3>Continue Your Last Reading</h3>
-            <div class="reading-content" onclick="continueReading()">
+            <div class="reading-content" onclick="showBookDetails()">
                 <div class="book-cover">
                     <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI2MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+U3RhdGlzdGljczwvdGV4dD4KPC9zdmc+" alt="Statistics Book">
                 </div>
@@ -195,6 +195,95 @@
         </section>
     </div>
 </div>
+
+<!-- Book Details Modal -->
+<div id="bookModal" class="book-modal">
+    <div class="book-modal-content">
+        <span class="book-modal-close">&times;</span>
+        <div class="book-modal-header">
+            <div class="book-modal-cover">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEyMCIgdmlld0JveD0iMCAwIDEwMCAxMjAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTIwIiBmaWxsPSIjNDI4NUY0Ii8+Cjx0ZXh0IHg9IjUwIiB5PSI2MCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxMiI+U3RhdGlzdGljczwvdGV4dD4KPC9zdmc+" alt="Statistics Book">
+            </div>
+            <div class="book-modal-info">
+                <h2>Statistics</h2>
+                <p class="book-modal-author">by Gordon and Finch</p>
+                <div class="book-modal-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 65%"></div>
+                    </div>
+                    <span class="progress-text">65% completed (Chapter 8 of 12)</span>
+                </div>
+                <div class="book-modal-tags">
+                    <span class="tag blue">Peer Reviewed</span>
+                    <span class="tag green">Online Resource</span>
+                    <span class="tag purple">Academic</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="book-modal-body">
+            <div class="book-details-section">
+                <h3>Book Details</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">ISBN:</span>
+                        <span class="detail-value">978-0-123-45678-9</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Publisher:</span>
+                        <span class="detail-value">Academic Press</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Publication Year:</span>
+                        <span class="detail-value">2023</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Pages:</span>
+                        <span class="detail-value">456</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Language:</span>
+                        <span class="detail-value">English</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Category:</span>
+                        <span class="detail-value">Mathematics & Statistics</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reading-progress-section">
+                <h3>Reading Progress</h3>
+                <div class="progress-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">Chapters Read</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">296</span>
+                        <span class="stat-label">Pages Read</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Days Reading</span>
+                    </div>
+                </div>
+                <p class="last-read">Last read: September 7, 2025 at 3:45 PM</p>
+            </div>
+            
+            <div class="book-summary-section">
+                <h3>Summary</h3>
+                <p>This comprehensive statistics textbook covers fundamental concepts in statistical analysis, probability theory, and data interpretation. Perfect for undergraduate and graduate students in mathematics, science, and business fields.</p>
+            </div>
+        </div>
+        
+        <div class="book-modal-footer">
+            <button class="btn-secondary" onclick="closeBookModal()">Close</button>
+            <button class="btn-primary" onclick="continueReading()">Continue Reading</button>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='dashboard.js') }}"></script>
