@@ -5,21 +5,62 @@
 <style>
     .recommendations-container {
         padding: 20px;
-        background: white;
+        background: #f8f9fa;
         min-height: 100vh;
         color: #333;
+    }
+
+    .section-block {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .section-block:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-header {
+        border-bottom: 3px solid #007bff;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
     }
 
     .section-title {
         font-size: 28px;
         font-weight: bold;
-        margin: 40px 0 20px 0;
+        margin: 0 0 10px 0;
         color: #2c3e50;
         text-shadow: none;
     }
 
+    .section-subtitle {
+        color: #6c757d;
+        margin: 0;
+        font-size: 16px;
+        font-weight: 400;
+    }
+
     .top-10-section {
-        margin-bottom: 50px;
+        background: white;
+        color: #333;
+    }
+
+    .top-10-section .section-header {
+        border-bottom: 3px solid #007bff;
+    }
+
+    .top-10-section .section-title {
+        color: #2c3e50;
+    }
+
+    .top-10-section .section-subtitle {
+        color: #6c757d;
     }
 
     .top-10-grid {
@@ -87,8 +128,16 @@
         margin: 0;
     }
 
-    .personalized-section, .course-section, .events-section {
-        margin-bottom: 40px;
+    .personalized-section .section-header {
+        border-bottom: 3px solid #28a745;
+    }
+
+    .course-section .section-header {
+        border-bottom: 3px solid #ffc107;
+    }
+
+    .events-section .section-header {
+        border-bottom: 3px solid #dc3545;
     }
 
     .cards-grid {
@@ -288,9 +337,11 @@
 {% block content %}
 <div class="recommendations-container">
     <!-- Top 10 Recommendations Section -->
-    <div class="top-10-section">
-        <h2 class="section-title">📚 Top 10 in {{ user_major }} - {{ user_year }}</h2>
-        <p style="color: #6c757d; margin-bottom: 20px;">Most popular books among students in your major and cohort</p>
+    <div class="section-block top-10-section">
+        <div class="section-header">
+            <h2 class="section-title">📚 Top 10 in {{ user_major }} - {{ user_year }}</h2>
+            <p class="section-subtitle">Most popular books among students in your major and cohort</p>
+        </div>
         
         <div class="top-10-grid">
             {% for book in top_10_books %}
@@ -311,9 +362,11 @@
     </div>
 
     <!-- Personalized Suggestions Section -->
-    <div class="personalized-section">
-        <h2 class="section-title">🎯 Personalized for You</h2>
-        <p style="color: #6c757d; margin-bottom: 20px;">Based on your academic performance and learning goals</p>
+    <div class="section-block personalized-section">
+        <div class="section-header">
+            <h2 class="section-title">🎯 Personalized for You</h2>
+            <p class="section-subtitle">Based on your academic performance and learning goals</p>
+        </div>
         
         <div class="cards-grid">
             {% for book in personalized_books %}
@@ -330,9 +383,11 @@
     </div>
 
     <!-- Course-Based Recommendations Section -->
-    <div class="course-section">
-        <h2 class="section-title">📖 For Your Current Courses</h2>
-        <p style="color: #6c757d; margin-bottom: 20px;">Recommended reading materials for your registered courses</p>
+    <div class="section-block course-section">
+        <div class="section-header">
+            <h2 class="section-title">📖 For Your Current Courses</h2>
+            <p class="section-subtitle">Recommended reading materials for your registered courses</p>
+        </div>
         
         <div class="cards-grid">
             {% for book in course_books %}
@@ -350,9 +405,11 @@
     </div>
 
     <!-- Events and Promotions Section -->
-    <div class="events-section">
-        <h2 class="section-title">🎉 Don't Miss Out!</h2>
-        <p style="color: #6c757d; margin-bottom: 20px;">Latest events and opportunities for students like you</p>
+    <div class="section-block events-section">
+        <div class="section-header">
+            <h2 class="section-title">🎉 Don't Miss Out!</h2>
+            <p class="section-subtitle">Latest events and opportunities for students like you</p>
+        </div>
         
         <div class="events-grid">
             {% for event in events %}
