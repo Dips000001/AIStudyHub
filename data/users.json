@@ -2,8 +2,9 @@
   "alex": {
     "password": "password",
     "favorites": [
-      8,
-      14
+      2,
+      1,
+      10
     ],
     "borrowed_books": [
       11,
