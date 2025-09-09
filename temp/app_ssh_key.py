@@ -15,7 +15,7 @@ app.secret_key = 'your-secret-key-change-this'
 SSH_CONFIG = {
     'hostname': "gateway.cs.cityu.edu.hk",
     'username': "mavislong2", 
-    'private_key_path': "./privatekey.txt",  # Path to your private key file
+    'private_key_path': "temp/privatekey.txt",  # Path to your private key file
     'passphrase': "mmducmeh"   # Passphrase for the private key (can be None if no passphrase)
 }
 
@@ -347,4 +347,5 @@ if __name__ == '__main__':
     print(f"Passphrase: {'Set' if SSH_CONFIG.get('passphrase') and SSH_CONFIG['passphrase'] != 'your_passphrase_here' else 'Not set'}")
     print("=====================================")
     
+
     app.run(debug=True, host='0.0.0.0', port=5002)
