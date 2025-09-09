@@ -72,10 +72,41 @@
     user-select: none;
 }
 
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
 .chatbox-title {
     font-weight: 600;
     font-size: 16px;
     margin: 0;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    opacity: 0.9;
+}
+
+.status-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-indicator.connected {
+    background-color: #4CAF50;
+    box-shadow: 0 0 6px rgba(76, 175, 80, 0.6);
+}
+
+.status-indicator.disconnected {
+    background-color: #f44336;
+    box-shadow: 0 0 6px rgba(244, 67, 54, 0.6);
 }
 
 .chatbox-controls {

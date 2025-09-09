@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import json
 import os
+from ollama_client import ollama_client
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'  # Change this to a random secret key
@@ -1583,6 +1584,96 @@ def get_resource_details(resource_id):
         return jsonify({'success': False, 'message': 'Resource not found'}), 404
     
     return jsonify({'success': True, 'resource': resource})
+
+# Ollama Chatbot API Routes
+@app.route('/api/ollama/connect', methods=['POST'])
+def ollama_connect():
+    """Connect to Ollama via SSH"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    try:
+        result = ollama_client.connect()
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Connection error: {str(e)}'
+        }), 500
+
+@app.route('/api/ollama/disconnect', methods=['POST'])
+def ollama_disconnect():
+    """Disconnect from Ollama"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    try:
+        result = ollama_client.disconnect()
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Disconnect error: {str(e)}'
+        }), 500
+
+@app.route('/api/ollama/chat', methods=['POST'])
+def ollama_chat():
+    """Send message to Ollama"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    try:
+        data = request.get_json()
+        message = data.get('message', '').strip()
+        
+        if not message:
+            return jsonify({
+                'success': False,
+                'message': 'No message provided'
+            }), 400
+        
+        result = ollama_client.chat(message)
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Chat error: {str(e)}'
+        }), 500
+
+@app.route('/api/ollama/status')
+def ollama_status():
+    """Get Ollama connection status"""
+    if 'username' not in session:
+        return jsonify({'connected': False, 'message': 'Please log in first'}), 401
+    
+    try:
+        status = ollama_client.get_status()
+        return jsonify(status)
+        
+    except Exception as e:
+        return jsonify({
+            'connected': False,
+            'message': f'Status error: {str(e)}'
+        }), 500
+
+@app.route('/api/ollama/models')
+def ollama_models():
+    """Get available Ollama models"""
+    if 'username' not in session:
+        return jsonify({'success': False, 'message': 'Please log in first'}), 401
+    
+    try:
+        result = ollama_client.get_available_models()
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'message': f'Models error: {str(e)}'
+        }), 500
 
 if __name__ == '__main__':
     # Ensure data directory exists

@@ -1,10 +1,12 @@
-// Floating Chatbox JavaScript
+// Floating Chatbox JavaScript with Ollama Integration
 class FloatingChatbox {
     constructor() {
         this.isExpanded = false;
         this.isDragging = false;
         this.dragOffset = { x: 0, y: 0 };
         this.messages = [];
+        this.isConnected = false;
+        this.isConnecting = false;
         this.init();
     }
 
@@ -23,8 +25,20 @@ class FloatingChatbox {
                 </div>
                 <div class="chatbox-expanded" id="chatboxExpanded" style="display: none;">
                     <div class="chatbox-header" id="chatboxHeader">
-                        <h3 class="chatbox-title">AI StudyHub Assistant</h3>
+                        <div class="header-left">
+                            <h3 class="chatbox-title">AI StudyHub Assistant</h3>
+                            <div class="connection-status" id="connectionStatus">
+                                <span class="status-indicator" id="statusIndicator"></span>
+                                <span id="statusText">Disconnected</span>
+                            </div>
+                        </div>
                         <div class="chatbox-controls">
+                            <button class="control-btn" id="connectBtn" title="Connect to AI" style="display: none;">
+                                <i class="fas fa-plug"></i>
+                            </button>
+                            <button class="control-btn" id="disconnectBtn" title="Disconnect" style="display: none;">
+                                <i class="fas fa-unlink"></i>
+                            </button>
                             <button class="control-btn" id="minimizeBtn" title="Minimize">
                                 <i class="fas fa-minus"></i>
                             </button>
@@ -53,6 +67,10 @@ class FloatingChatbox {
         this.input = document.getElementById('chatboxInput');
         this.sendBtn = document.getElementById('sendBtn');
         this.minimizeBtn = document.getElementById('minimizeBtn');
+        this.connectBtn = document.getElementById('connectBtn');
+        this.disconnectBtn = document.getElementById('disconnectBtn');
+        this.statusIndicator = document.getElementById('statusIndicator');
+        this.statusText = document.getElementById('statusText');
         this.notificationBadge = document.getElementById('notificationBadge');
     }
 
@@ -60,6 +78,10 @@ class FloatingChatbox {
         // Toggle chatbox
         this.button.addEventListener('click', () => this.toggleChatbox());
         this.minimizeBtn.addEventListener('click', () => this.toggleChatbox());
+
+        // Connection controls
+        this.connectBtn.addEventListener('click', () => this.connectToOllama());
+        this.disconnectBtn.addEventListener('click', () => this.disconnectFromOllama());
 
         // Send message
         this.sendBtn.addEventListener('click', () => this.sendMessage());
@@ -188,9 +210,14 @@ class FloatingChatbox {
         this.messages.scrollTop = this.messages.scrollHeight;
     }
 
-    sendMessage() {
+    async sendMessage() {
         const message = this.input.value.trim();
         if (!message) return;
+        
+        if (!this.isConnected) {
+            this.addMessage("Please connect to the AI assistant first by clicking the connect button.", false);
+            return;
+        }
         
         // Add user message
         this.addMessage(message, true);
@@ -199,52 +226,131 @@ class FloatingChatbox {
         // Show typing indicator
         this.showTypingIndicator();
         
-        // Simulate AI response
-        setTimeout(() => {
+        try {
+            const response = await fetch('/api/ollama/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message: message })
+            });
+            
+            const data = await response.json();
+            
             this.hideTypingIndicator();
-            this.generateAIResponse(message);
-        }, 1000 + Math.random() * 2000);
+            
+            if (data.success) {
+                this.addMessage(data.response, false);
+            } else {
+                this.addMessage(`Error: ${data.message}`, false);
+                if (data.message.includes('Not connected')) {
+                    this.updateConnectionStatus(false);
+                }
+            }
+        } catch (error) {
+            this.hideTypingIndicator();
+            this.addMessage(`Connection error: ${error.message}`, false);
+        }
     }
 
-    generateAIResponse(userMessage) {
-        const responses = [
-            "I'm here to help you with your studies! What would you like to know?",
-            "That's a great question! Let me help you find the right resources.",
-            "I can assist you with finding books, booking study rooms, or getting recommendations.",
-            "Would you like me to help you search for specific materials in our library?",
-            "I can help you with course materials, study tips, or navigating the library system.",
-            "Feel free to ask me about our booking system, available resources, or study recommendations!",
-            "I'm designed to make your academic journey easier. How can I assist you today?",
-            "That's interesting! I can help you find related materials or suggest study strategies.",
-            "I have access to our entire library database. What specific topic are you researching?",
-            "Would you like me to recommend some study resources based on your current courses?"
-        ];
+    async connectToOllama() {
+        if (this.isConnecting) return;
         
-        // Simple keyword-based responses
-        const lowerMessage = userMessage.toLowerCase();
-        let response;
+        this.isConnecting = true;
+        this.updateConnectionStatus(false, 'Connecting...');
+        this.addMessage('Connecting to AI assistant...', false);
         
-        if (lowerMessage.includes('book') || lowerMessage.includes('library')) {
-            response = "I can help you find books in our library! You can search through our physical books, e-books, and academic resources. Would you like me to help you search for something specific?";
-        } else if (lowerMessage.includes('room') || lowerMessage.includes('booking')) {
-            response = "Our booking system allows you to reserve study rooms, special facilities, and equipment. You can book individual study rooms, group rooms, conference rooms, and even devices like 3D printers!";
-        } else if (lowerMessage.includes('recommend') || lowerMessage.includes('suggestion')) {
-            response = "I can provide personalized recommendations based on your major, courses, and academic performance. Check out the Recommendations page for curated suggestions!";
-        } else if (lowerMessage.includes('help') || lowerMessage.includes('how')) {
-            response = "I'm here to help! You can ask me about finding books, booking rooms, getting recommendations, or navigating any part of the AI StudyHub system.";
-        } else {
-            response = responses[Math.floor(Math.random() * responses.length)];
+        try {
+            const response = await fetch('/api/ollama/connect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                this.isConnected = true;
+                this.updateConnectionStatus(true);
+                this.addMessage(data.message, false);
+                this.addMessage('Hello! I\'m your AI StudyHub assistant. How can I help you today?', false);
+            } else {
+                this.updateConnectionStatus(false);
+                this.addMessage(`Connection failed: ${data.message}`, false);
+            }
+        } catch (error) {
+            this.updateConnectionStatus(false);
+            this.addMessage(`Connection error: ${error.message}`, false);
+        } finally {
+            this.isConnecting = false;
         }
+    }
+
+    async disconnectFromOllama() {
+        try {
+            const response = await fetch('/api/ollama/disconnect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            
+            const data = await response.json();
+            this.isConnected = false;
+            this.updateConnectionStatus(false);
+            this.addMessage(data.message, false);
+        } catch (error) {
+            this.addMessage(`Disconnect error: ${error.message}`, false);
+        }
+    }
+
+    updateConnectionStatus(connected, customText = null) {
+        this.isConnected = connected;
         
-        this.addMessage(response);
+        if (connected) {
+            this.statusIndicator.className = 'status-indicator connected';
+            this.statusText.textContent = customText || 'Connected';
+            this.connectBtn.style.display = 'none';
+            this.disconnectBtn.style.display = 'inline-block';
+            this.input.disabled = false;
+            this.sendBtn.disabled = false;
+        } else {
+            this.statusIndicator.className = 'status-indicator disconnected';
+            this.statusText.textContent = customText || 'Disconnected';
+            this.connectBtn.style.display = 'inline-block';
+            this.disconnectBtn.style.display = 'none';
+            this.input.disabled = true;
+            this.sendBtn.disabled = true;
+        }
+    }
+
+    async checkConnectionStatus() {
+        try {
+            const response = await fetch('/api/ollama/status');
+            const data = await response.json();
+            
+            if (data.connected) {
+                this.isConnected = true;
+                this.updateConnectionStatus(true);
+            } else {
+                this.isConnected = false;
+                this.updateConnectionStatus(false);
+            }
+        } catch (error) {
+            console.error('Status check failed:', error);
+            this.updateConnectionStatus(false);
+        }
     }
 
     addWelcomeMessage() {
         setTimeout(() => {
-            this.addMessage("👋 Welcome to AI StudyHub! I'm your virtual assistant. How can I help you today?");
+            this.addMessage("👋 Welcome to AI StudyHub! Click the connect button to start chatting with your AI assistant.");
             if (!this.isExpanded) {
                 this.showNotification();
             }
+            // Check connection status on load
+            this.checkConnectionStatus();
         }, 2000);
     }
 
