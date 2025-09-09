@@ -8,7 +8,7 @@ from typing import Dict, Any
 SSH_CONFIG = {
     'hostname': "gateway.cs.cityu.edu.hk",
     'username': "mavislong2",
-    'private_key_path': "temp/privatekey.txt",
+    'private_key_path': "./pw/privatekey.txt",
     'passphrase': "mmducmeh"
 }
 
